@@ -50,15 +50,14 @@
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".HomePage"
             android:label="@string/title_activity_sub_navigate"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:configChanges="locale">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="rta.ae.sharekni.SharekniOld" />
@@ -90,10 +89,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="rta.ae.sharekni.SharekniOld" />
         </activity>
-        <activity
-            android:name=".ViewProfileActivity"
-            android:label="@string/title_activity_view_profile"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".Arafa.Activities.ImageUp"
             android:label="@string/title_activity_home_page_test"
@@ -365,12 +361,14 @@
         </activity>
         <activity
             android:name=".ViewPermit"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:configChanges="locale"/>
         <activity android:name=".Privacy_Policy" />
-        <activity android:name=".Destination_Activity" />
         <activity android:name=".Display_My_Vehicles" />
 
-        <receiver android:name=".SmsReceiver">
+        <receiver
+            android:name=".SmsReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
@@ -383,13 +381,31 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <receiver android:name=".MyMobileAppTrackerReceiver">
+        <!--<receiver android:name=".MyMobileAppTrackerReceiver"-->
+        <!--android:exported="false">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="com.android.vending.INSTALL_REFERRER" />-->
+        <!--</intent-filter>-->
+        <!--</receiver>-->
+
+        <receiver
+            android:name="com.tune.TuneTracker"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MrMohamedAliTest"></activity>
+        <activity
+            android:name=".PendingRequestDetails"
+            android:parentActivityName=".DriverAlertsForRequest"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Base">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="rta.ae.sharekni.DriverAlertsForRequest" />
+
+        </activity>
     </application>
 
 </manifest>

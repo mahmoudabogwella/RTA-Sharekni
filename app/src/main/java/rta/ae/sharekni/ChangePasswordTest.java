@@ -55,7 +55,6 @@ public class ChangePasswordTest extends AppCompatActivity {
                     int timeoutMs = 2000;   // 2 seconds
                     sock.connect(sockaddr, timeoutMs);
                     exists = true;
-
                 } catch (final Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {

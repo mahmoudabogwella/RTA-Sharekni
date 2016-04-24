@@ -15,12 +15,15 @@ public class QuickSearchDataModel extends ArrayList<Parcelable> implements Parce
             , From_RegionName_en, SDG_Route_Name_en, SDG_Route_PreferredGender
             , SDG_Route_Start_Date, SDG_Route_Start_FromTime, To_EmirateName_en
             , To_RegionName_en, VehicleDescription, Nationality_en, AccountEmail
-            , AccountMobile, AccountPhoto,SDG_RouteDays,Rating;
+            , AccountMobile, AccountPhoto,SDG_RouteDays,Rating,LastSeen,MapKey,InviteType;
+    int Passenger_ID;
+
+    String GreenPoints,GreenCo2Saving;
 
 
     int AvilableOrRequiredSeats, SDG_Route_FromEmirate_ID
             , SDG_Route_FromRegion_ID, SDG_Route_ID, SDG_Route_ToEmirate_ID
-            , SDG_Route_ToRegion_ID, DriverId, SDG_Route_NoOfSeats;
+            , SDG_Route_ToRegion_ID, DriverId, SDG_Route_NoOfSeats,AccountID,InviteStatus;
 
     double SDG_Route_Coordinates_Start_Lat, SDG_Route_Coordinates_End_Lat
             , SDG_Route_Coordinates_Start_Lng, SDG_Route_Coordinates_End_Lng;
@@ -67,6 +70,17 @@ public class QuickSearchDataModel extends ArrayList<Parcelable> implements Parce
         SDG_Route_Coordinates_End_Lng = in.readDouble();
         Rating=in.readString();
         SDG_RouteDays=in.readString();
+        LastSeen=in.readString();
+        MapKey=in.readString();
+        AccountID=in.readInt();
+        InviteType=in.readString();
+        InviteStatus=in.readInt();
+        Passenger_ID=in.readInt();
+
+        GreenPoints=in.readString();
+        GreenCo2Saving=in.readString();
+
+
     }
 
     public static final Creator<QuickSearchDataModel> CREATOR = new Creator<QuickSearchDataModel>() {
@@ -250,6 +264,22 @@ public class QuickSearchDataModel extends ArrayList<Parcelable> implements Parce
         this.SDG_Route_ToEmirate_ID = SDG_Route_ToEmirate_ID;
     }
 
+    public String getGreenPoints() {
+        return GreenPoints;
+    }
+
+    public void setGreenPoints(String greenPoints) {
+        GreenPoints = greenPoints;
+    }
+
+    public String getGreenCo2Saving() {
+        return GreenCo2Saving;
+    }
+
+    public void setGreenCo2Saving(String greenCo2Saving) {
+        GreenCo2Saving = greenCo2Saving;
+    }
+
     public int getSDG_Route_ToRegion_ID() {
         return SDG_Route_ToRegion_ID;
     }
@@ -306,6 +336,14 @@ public class QuickSearchDataModel extends ArrayList<Parcelable> implements Parce
         this.SDG_Route_Coordinates_End_Lng = SDG_Route_Coordinates_End_Lng;
     }
 
+    public String getLastSeen() {
+        return LastSeen;
+    }
+
+    public void setLastSeen(String lastSeen) {
+        LastSeen = lastSeen;
+    }
+
     public void setRating(String rating) {
         Rating = rating;
     }
@@ -314,7 +352,45 @@ public class QuickSearchDataModel extends ArrayList<Parcelable> implements Parce
         return Rating;
     }
 
+    public String getMapKey() {
+        return MapKey;
+    }
 
+    public void setMapKey(String mapKey) {
+        MapKey = mapKey;
+    }
+
+    public int getAccountID() {
+        return AccountID;
+    }
+
+    public void setAccountID(int accountID) {
+        AccountID = accountID;
+    }
+
+    public String getInviteType() {
+        return InviteType;
+    }
+
+    public void setInviteType(String inviteType) {
+        InviteType = inviteType;
+    }
+
+    public int getInviteStatus() {
+        return InviteStatus;
+    }
+
+    public void setInviteStatus(int inviteStatus) {
+        InviteStatus = inviteStatus;
+    }
+
+    public int getPassenger_ID() {
+        return Passenger_ID;
+    }
+
+    public void setPassenger_ID(int passenger_ID) {
+        Passenger_ID = passenger_ID;
+    }
 
     @Override
     public int describeContents() {
@@ -352,6 +428,15 @@ public class QuickSearchDataModel extends ArrayList<Parcelable> implements Parce
         dest.writeDouble(SDG_Route_Coordinates_End_Lng);
         dest.writeString(SDG_RouteDays);
         dest.writeString(Rating);
+        dest.writeString(LastSeen);
+        dest.writeString(MapKey);
+        dest.writeInt(AccountID);
+        dest.writeString(InviteType);
+        dest.writeInt(InviteStatus);
+        dest.writeInt(Passenger_ID);
+
+        dest.writeString(GreenPoints);
+        dest.writeString(GreenCo2Saving);
     }
 }
 

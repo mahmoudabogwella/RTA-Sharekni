@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,8 +33,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.analytics.HitBuilders;
-import com.mobileapptracker.MobileAppTracker;
 import com.pkmmte.view.CircularImageView;
 
 import org.json.JSONArray;
@@ -49,6 +53,8 @@ import java.util.Locale;
 import rta.ae.sharekni.Arafa.Classes.AppController;
 import rta.ae.sharekni.Arafa.Classes.GetData;
 import rta.ae.sharekni.Arafa.Classes.ImageDecoder;
+import rta.ae.sharekni.Arafa.Classes.VolleySingleton;
+import rta.ae.sharekni.Arafa.DataModel.BestRouteDataModel;
 import rta.ae.sharekni.MainNavigationDrawerFragment.NavigationDrawerFragment;
 import rta.ae.sharekni.OnBoardDir.OnboardingActivity;
 
@@ -56,6 +62,10 @@ import rta.ae.sharekni.OnBoardDir.OnboardingActivity;
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
 
 
+    int Driver_Rides_Count = 0;
+    String urlPermit = GetData.DOMAIN + "GetPermitByDriverId?id=";
+    public String Driver_Current_Passnger = "";
+    rideJson rideJson;
     public static String ImagePhotoPath;
     public Thread t;
     static HomePage HomaPageActivity;
@@ -68,11 +78,10 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     int Vehicles_Count_FLAG = 0;
     TextView Verify_Phone_num_txt;
 
-    public static  String  TRAFFIC_FILE_NUMBER="";
-    public static  String  TRAFFIC_BIRTH_DATE="";
+    public static String TRAFFIC_FILE_NUMBER = "";
+    public static String TRAFFIC_BIRTH_DATE = "";
 
     back1 mobile_verify;
-
 
 
     int Driver_ID;
@@ -102,8 +111,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     ImageView Photo_Verified_id;
     TextView Account_Email;
     EditText Edit_Mobile_Verify_txt;
-    String VERIFICATION_CODE="";
-    public MobileAppTracker mobileAppTracker = null;
+    String VERIFICATION_CODE = "";
+    //public static MobileAppTracker mobileAppTracker = null;
 
     public static HomePage getInstance() {
         return HomaPageActivity;
@@ -154,15 +163,9 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         c = this;
 
 
-        mobileAppTracker = MobileAppTracker.init(getApplicationContext(),
-                "189698",
-                "172510cf81e7148e5a01851f65fb0c7e");
-
-
-
-
         name = (TextView) findViewById(R.id.tv_name_home);
         nat = (TextView) findViewById(R.id.nat_home);
+        nat.setVisibility(View.GONE);
         Account_PhoneNumber = (TextView) findViewById(R.id.Account_PhoneNumber);
         rating = (TextView) findViewById(R.id.textView);
         btn_create = (RelativeLayout) findViewById(R.id.btn_createCarPool);
@@ -176,7 +179,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         DriverMyAlertsCount = (TextView) findViewById(R.id.DriverMyAlertsCount);
         Relative_quickSearch = (RelativeLayout) findViewById(R.id.Relative_quickSearch);
         Home_Relative_Notify = (RelativeLayout) findViewById(R.id.Home_Relative_Notify);
-        driver_rides_Created = (RelativeLayout) findViewById(R.id.driver_rides_Created);
         Rides_joined_Relative = (RelativeLayout) findViewById(R.id.Rides_joined_Relative);
         btn_history = (RelativeLayout) findViewById(R.id.home_history);
         Rides_joined_txt_1 = (TextView) findViewById(R.id.txt_55);
@@ -185,17 +187,21 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         Saved_Search_txt_2 = (TextView) findViewById(R.id.txt_56);
         Edit_Profile_Im = (ImageView) findViewById(R.id.Edit_Profile_Im);
 
-        Verify_Phone_num_txt= (TextView) findViewById(R.id.Verify_Phone_num_txt);
-        Verified_Im= (ImageView) findViewById(R.id.Verified_Im);
-        Photo_Verified_id  = (ImageView) findViewById(R.id.Photo_Verified_id);
-        Account_Email= (TextView) findViewById(R.id.Account_Email);
-
+        Verify_Phone_num_txt = (TextView) findViewById(R.id.Verify_Phone_num_txt);
+        Verified_Im = (ImageView) findViewById(R.id.Verified_Im);
+        Photo_Verified_id = (ImageView) findViewById(R.id.Photo_Verified_id);
+        Account_Email = (TextView) findViewById(R.id.Account_Email);
 
 
         circularImageView = (CircularImageView) findViewById(R.id.profilepic);
         circularImageView.setBorderWidth(5);
         circularImageView.setSelectorStrokeWidth(5);
         circularImageView.addShadow();
+
+
+        Locale locale = Locale.getDefault();
+        Locale_Str = locale.toString();
+        Log.d("Main  Home locale", Locale_Str);
 
 
         NavigationDrawerFragment.navy_Change_lang.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +211,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
                 Locale locale = Locale.getDefault();
                 Locale_Str = locale.toString();
-                Log.d("test locale", Locale_Str);
+                Log.d("Home locale", Locale_Str);
 
 
                 if (Locale_Str.contains("en")) {
@@ -218,11 +224,10 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     finish();
                     startActivity(getIntent());
 
-
                 } else {
 
 
-                    Locale locale3 = new Locale("en");
+                    Locale locale3 = new Locale("en_US");
                     Locale.setDefault(locale3);
                     Configuration config3 = new Configuration();
                     config3.locale = locale3;
@@ -288,8 +293,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         new loading().execute();
 
-        mobile_verify =  new back1();
-
+        mobile_verify = new back1();
 
 
     }  // on create
@@ -304,11 +308,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         @Override
         protected void onPostExecute(Object o) {
-            if(jsonArray != null) {
+            if (jsonArray != null) {
                 VehiclesCount_str = "";
                 VehiclesCount_str += "(";
                 try {
-                    All_Alerts = jsonArray.getInt("DriverMyAlertsCount") + jsonArray.getInt("PassengerMyAlertsCount");
+                    All_Alerts = jsonArray.getInt("DriverMyAlertsCount") + jsonArray.getInt("PassengerMyAlertsCount") + jsonArray.getInt("PendingRequestsCount") + jsonArray.getInt("PendingInvitationCount") + jsonArray.getInt("Passenger_Invitation_Count");
 
                     Vehicles_Count_FLAG = jsonArray.getInt("VehiclesCount");
                     Log.d("vehicle count flag", String.valueOf(Vehicles_Count_FLAG));
@@ -392,9 +396,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     }
 
 
-
-
-
     private class back1 extends AsyncTask {
 
         ProgressDialog pDialog;
@@ -414,11 +415,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
             if (data.equals("\"1\"")) {
 
-                Toast.makeText(getBaseContext(),"Mobile Verification Code has been sent to your mobile .", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Mobile Verification Code has been sent to your mobile .", Toast.LENGTH_LONG).show();
 
 //
 
- //               final Dialog dialog = new Dialog(c);
+                //               final Dialog dialog = new Dialog(c);
 ///                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 //                dialog.setContentView(R.layout.noroutesdialog);
 //                Button btn = (Button) dialog.findViewById(R.id.noroute_id);
@@ -434,7 +435,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 //                    }
 //                });
 
-            }else {
+            } else {
                 Toast.makeText(c, "Please Check Mobile Number", Toast.LENGTH_SHORT).show();
             }
 
@@ -479,7 +480,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 try {
 
 
-                    data=  j.SendMobileVerification(Integer.parseInt(ID));
+                    data = j.SendMobileVerification(Integer.parseInt(ID));
 
                 } catch (JSONException e) {
                     hidePDialog();
@@ -499,14 +500,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         }
 
     }
-
-
-
-
-
-
-
-
 
 
     private void CreateNotification(int y) {
@@ -570,6 +563,29 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
+        try {
+            JSONArray jsonArray = gd.Passenger_AlertsForInvitation(Integer.parseInt(ID));
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject j = jsonArray.getJSONObject(i);
+                Intent intent = new Intent(this, DriverAlertsForRequest.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+                Notification.Builder builder = new Notification.Builder(this);
+                builder.setContentTitle(getString(R.string.route) + j.getString("RouteName"));
+                builder.setContentText(j.getString("DriverName") + getString(R.string.Sent_Invite));
+                builder.setSmallIcon(R.drawable.notificationlogo);
+                builder.setContentIntent(pendingIntent);
+                Notification notification = builder.build();
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                manager.notify(y, notification);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
@@ -623,10 +639,13 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     protected void onResume() {
         super.onResume();
 
-        // Get source of open for app re-engagement
-        mobileAppTracker.setReferralSources(this);
-        // MAT will not function unless the measureSession call is included
-        mobileAppTracker.measureSession();
+        if (Sharekni.tune != null) {
+            // Get source of open for app re-engagement
+            Sharekni.tune.setReferralSources(this);
+            // MAT will not function unless the measureSession call is included
+            Sharekni.tune.measureSession();
+
+        }
 
 
     }
@@ -642,14 +661,73 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         if (AccountType.equals("D")) {
             if (v == btn_create) {
-                Intent intent = new Intent(getBaseContext(), DriverCreateCarPool.class);
-                intent.putExtra("ID", Driver_ID);
-                startActivity(intent);
-            } else {
 
-                Intent intent = new Intent(getBaseContext(), PassengerMyApprovedRides.class);
-                startActivity(intent);
+                Log.d("Driver Rides Count", String.valueOf(Driver_Rides_Count));
+
+                // For Testing Purpose
+                if (true) {
+
+                    //  For Prodution
+                    //     if (Vehicles_Count_FLAG != 0) {
+
+
+                    if (Driver_Rides_Count < 2) {
+
+                        Intent intent = new Intent(getBaseContext(), DriverCreateCarPool.class);
+                        intent.putExtra("ID", Driver_ID);
+                        startActivity(intent);
+
+                    } else {
+                        final Dialog dialog = new Dialog(c);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.noroutesdialog);
+                        Button btn = (Button) dialog.findViewById(R.id.noroute_id);
+                        TextView Text_3 = (TextView) dialog.findViewById(R.id.Text_3);
+                        dialog.show();
+                        btn.setText(R.string.ok_2);
+                        Text_3.setText(R.string.Max_Routes_Reached);
+
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+
+                } else {
+                    final Dialog dialog = new Dialog(c);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.novehiclesfound);
+                    Button RegisterVehicleBtn = (Button) dialog.findViewById(R.id.okButton);
+                    Button DismissBtn = (Button) dialog.findViewById(R.id.CancelButton);
+                    dialog.show();
+
+                    RegisterVehicleBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            Intent intent = new Intent(getBaseContext(), RegisterVehicle.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    DismissBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+
+                        }
+                    });
+
+
+                }
             }
+//            else {
+//
+//                Intent intent = new Intent(getBaseContext(), PassengerMyApprovedRides.class);
+//                startActivity(intent);
+//            }
         }
     }
 
@@ -685,7 +763,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         @Override
         protected void onPostExecute(Object o) {
             try {
-                All_Alerts = jsonArray.getInt("DriverMyAlertsCount") + jsonArray.getInt("PassengerMyAlertsCount");
+                All_Alerts = jsonArray.getInt("DriverMyAlertsCount") + jsonArray.getInt("PassengerMyAlertsCount") + jsonArray.getInt("PendingRequestsCount") + jsonArray.getInt("PendingInvitationCount") + jsonArray.getInt("Passenger_Invitation_Count");
                 name_str = "";
                 nat_str = "";
                 Firstname = "";
@@ -695,24 +773,32 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 LastName = (jsonArray.getString("LastName"));
                 LastName = LastName.substring(0, 1).toUpperCase() + LastName.substring(1);
                 name_str = Firstname + " " + LastName;
+//                String LastSeen = (jsonArray.getString("LastSeen"));
+//                long timestamp = Long.parseLong("1455743276943") * 1000;
+//                DateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+//                Date netDate = (new Date(timestamp));
+//                name_str = Firstname + " " + LastName + " " + sdf.format(netDate);
 
                 Account_Email.setText(jsonArray.getString("Username"));
 
-                IsMobileVerified= jsonArray.getString("IsMobileVerified");
-                if (IsMobileVerified.equals("true")){
+                IsMobileVerified = jsonArray.getString("IsMobileVerified");
+                if (IsMobileVerified.equals("true")) {
                     Verify_Phone_num_txt.setVisibility(View.INVISIBLE);
                     Verified_Im.setVisibility(View.VISIBLE);
                 }
 
 
                 IsPhotoVerified = jsonArray.getString("IsPhotoVerified");
-                if (IsPhotoVerified.equals("true")){
+                if (IsPhotoVerified.equals("true")) {
                     Photo_Verified_id.setVisibility(View.VISIBLE);
                 }
 
 
                 if (!jsonArray.getString("Mobile").equals("null") && !jsonArray.getString("Mobile").equals("")) {
-                    Account_PhoneNumber.setText(jsonArray.getString("Mobile"));
+                    String Mob_txt = jsonArray.getString("Mobile");
+                    Log.d("Mobile", Mob_txt);
+                    Mob_txt = Mob_txt.substring(0, 4) + " " + Mob_txt.substring(4, 6) + " " + Mob_txt.substring(6, Mob_txt.length());
+                    Account_PhoneNumber.setText(Mob_txt);
                 }
 
 
@@ -742,24 +828,25 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 DriverMyRidesCount_str += (jsonArray.getString("DriverMyRidesCount"));
                 DriverMyRidesCount_str += ")";
                 DriverMyRidesCount.setText(DriverMyRidesCount_str);
+                Driver_Rides_Count = jsonArray.getInt("DriverMyRidesCount");
+                Log.d("Driver_Rides_Count", String.valueOf(Driver_Rides_Count));
+
                 DriverMyAlertsCount.setText(String.valueOf(All_Alerts));
                 rating.setText(jsonArray.getString("AccountRating"));
 
 
-                if (!jsonArray.getString("DriverTrafficFileNo").equals("") &&  !jsonArray.getString("DriverTrafficFileNo").equals("null")){
+                if (!jsonArray.getString("DriverTrafficFileNo").equals("") && !jsonArray.getString("DriverTrafficFileNo").equals("null")) {
                     TRAFFIC_FILE_NUMBER = jsonArray.getString("DriverTrafficFileNo");
 
-                    Log.d("traffic file num",TRAFFIC_FILE_NUMBER);
+                    Log.d("traffic file num", TRAFFIC_FILE_NUMBER);
                 }
-                if (!jsonArray.getString("BirthDate").equals("") &&  !jsonArray.getString("BirthDate").equals("null")){
+                if (!jsonArray.getString("BirthDate").equals("") && !jsonArray.getString("BirthDate").equals("null")) {
                     TRAFFIC_BIRTH_DATE = jsonArray.getString("BirthDate");
                     Log.d("traffic birthdate", TRAFFIC_BIRTH_DATE);
                 }
 
 
-
                 assert AccountType != null;
-
 
 
                 if (!AccountType.equals("D")) {
@@ -806,9 +893,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     });
 
 
-
-
-
                     Home_Realtive_Vehicles.setVisibility(View.INVISIBLE);
                     driver_rides_Created.setVisibility(View.INVISIBLE);
                 } else {
@@ -823,8 +907,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                 startActivity(intent);
                             } else {
                                 Intent in2 = new Intent(getBaseContext(), Display_My_Vehicles.class);
-                                in2.putExtra("TRAFFIC_FILE_NUMBER",TRAFFIC_FILE_NUMBER);
-                                in2.putExtra("TRAFFIC_BIRTH_DATE",TRAFFIC_BIRTH_DATE);
+                                in2.putExtra("TRAFFIC_FILE_NUMBER", TRAFFIC_FILE_NUMBER);
+                                in2.putExtra("TRAFFIC_BIRTH_DATE", TRAFFIC_BIRTH_DATE);
                                 Log.d("traffic birthdate 2", TRAFFIC_BIRTH_DATE);
                                 Log.d("traffic file num 2", TRAFFIC_FILE_NUMBER);
                                 startActivity(in2);
@@ -837,6 +921,12 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     Home_Relative_Permit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
+//                            rideJson = new rideJson();
+//                            rideJson.execute();
+
+                            //Log.d("Driver permit pass",Driver_Current_Passnger);
+
                             Intent intent = new Intent(getBaseContext(), DriverPermits.class);
                             startActivity(intent);
 
@@ -850,13 +940,13 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                             Log.d("vehicle flag count", String.valueOf(Vehicles_Count_FLAG));
 
                             if (Vehicles_Count_FLAG == 0) {
-
                                 Intent intent = new Intent(getBaseContext(), RegisterVehicle.class);
                                 startActivity(intent);
+
                             } else {
                                 Intent in2 = new Intent(getBaseContext(), Display_My_Vehicles.class);
-                                in2.putExtra("TRAFFIC_FILE_NUMBER",TRAFFIC_FILE_NUMBER);
-                                in2.putExtra("TRAFFIC_BIRTH_DATE",TRAFFIC_BIRTH_DATE);
+                                in2.putExtra("TRAFFIC_FILE_NUMBER", TRAFFIC_FILE_NUMBER);
+                                in2.putExtra("TRAFFIC_BIRTH_DATE", TRAFFIC_BIRTH_DATE);
                                 Log.d("traffic birthdate 2", TRAFFIC_BIRTH_DATE);
                                 Log.d("traffic file num 2", TRAFFIC_FILE_NUMBER);
                                 startActivity(in2);
@@ -885,23 +975,64 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     });
 
                 }
-                if (jsonArray.getString("GenderEn").equals("Female")) {
-                    circularImageView.setImageResource(R.drawable.defaultdriverfemale);
-                }
+
 //                GetData gd = new GetData();
 //                gd.SetImage(circularImageView,jsonArray.getString("PhotoPath"));
 //                circularImageView.setImageBitmap(gd.GetImage(jsonArray.getString("PhotoPath")));
 //                circularImageView.setImageURI(Uri.parse(GetData.PhotoURL));
-                ImageDecoder im = new ImageDecoder();
-                im.stringRequest(jsonArray.getString("PhotoPath"), circularImageView, HomePage.this);
-                im.stringRequest(jsonArray.getString("PhotoPath"), NavigationDrawerFragment.circularImageView, HomePage.this);
-                ImagePhotoPath = jsonArray.getString("PhotoPath");
+                if (jsonArray.getString("IsPhotoVerified").toLowerCase().equals("false")) {
+                    Locale locale = Locale.getDefault();
+                    Locale_Str = locale.toString();
+                    if (Locale_Str.contains("en")) {
+                        if (jsonArray.getString("GenderEn").equals("Male")) {
+                            circularImageView.setImageResource(R.drawable.imageafterediten);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageafterediten);
+
+
+                        } else {
+                            circularImageView.setImageResource(R.drawable.imageaftereditfemale);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageaftereditfemale);
+
+                        }
+
+                    } else {
+
+                        if (jsonArray.getString("GenderEn").equals("Male")) {
+                            circularImageView.setImageResource(R.drawable.imageaftereditar);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageaftereditar);
+
+                        } else {
+                            circularImageView.setImageResource(R.drawable.imageaftereditfemalear);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageaftereditfemalear);
+
+                        }
+
+                    }
+
+                } else if (jsonArray.getString("IsPhotoVerified").toLowerCase().equals("")) {
+                    if (jsonArray.getString("GenderEn").equals("Male")) {
+                        circularImageView.setImageResource(R.drawable.defaultdriver);
+                        NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.defaultdriver);
+
+                    } else {
+                        circularImageView.setImageResource(R.drawable.defaultdriverfemale);
+                        NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.defaultdriverfemale);
+
+                    }
+                } else {
+                    ImageDecoder im = new ImageDecoder();
+                    im.stringRequest(jsonArray.getString("PhotoPath"), circularImageView, HomePage.this);
+                    im.stringRequest(jsonArray.getString("PhotoPath"), NavigationDrawerFragment.circularImageView, HomePage.this);
+                    ImagePhotoPath = jsonArray.getString("PhotoPath");
+                }
+
             } catch (JSONException e) {
                 hidePDialog();
                 e.printStackTrace();
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
+
 
             btn_history.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -940,7 +1071,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     mobile_verify = new back1();
                     mobile_verify.execute();
 
-                    VERIFICATION_CODE="";
+                    VERIFICATION_CODE = "";
                     final Dialog dialog = new Dialog(c);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.mobile_verify_code_dailog);
@@ -980,7 +1111,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     });
 
 
-
                     Mobile_Verify_Resend_Code.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -991,7 +1121,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     });
 
 
-
                 }
             });
 
@@ -999,7 +1128,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             Relative_quickSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     Intent intent = new Intent(getBaseContext(), QSearch.class);
                     intent.putExtra("PassengerId", ID);
                     startActivity(intent);
@@ -1010,9 +1138,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             driver_rides_Created.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d("Driver Rides Count", String.valueOf(Driver_Rides_Count));
                     Intent intent = new Intent(getBaseContext(), DriverCreatedRides.class);
                     intent.putExtra("DriverID", Driver_ID);
                     startActivity(intent);
+
                 }
             });
 
@@ -1080,8 +1210,132 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     }
 
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    private class rideJson extends AsyncTask {
+        boolean exists = false;
+        ProgressDialog pDialog;
+
+
+        @Override
+        protected void onPostExecute(Object o) {
+            hidePDialog();
+            super.onPostExecute(o);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(HomePage.this);
+            pDialog.setMessage(getString(R.string.loading) + "...");
+            pDialog.show();
+            super.onPreExecute();
+        }
+
+        private void hidePDialog() {
+            if (pDialog != null) {
+                pDialog.dismiss();
+                pDialog = null;
+            }
+        }
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+            try {
+                SocketAddress sockaddr = new InetSocketAddress("www.google.com", 80);
+                Socket sock = new Socket();
+                int timeoutMs = 2000;   // 2 seconds
+                sock.connect(sockaddr, timeoutMs);
+                exists = true;
+            } catch (final Exception e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        new AlertDialog.Builder(HomePage.this)
+                                .setTitle(getString(R.string.connection_problem))
+                                .setMessage(getString(R.string.con_problem_message))
+                                .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                        startActivity(getIntent());
+                                    }
+                                })
+                                .setNegativeButton(getString(R.string.goBack), new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                    }
+                                }).setIcon(android.R.drawable.ic_dialog_alert).show();
+                        Toast.makeText(HomePage.this, getString(R.string.connection_problem), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            if (exists) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, urlPermit + Driver_ID,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                response = response.replaceAll("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
+                                response = response.replaceAll("<string xmlns=\"http://Sharekni-MobAndroid-Data.org/\">", "");
+                                response = response.replaceAll("</string>", "");
+                                // Display the first 500 characters of the response string.
+                                String data = response.substring(40);
+                                Log.d("url", urlPermit + Driver_ID);
+                                try {
+                                    JSONArray jArray = new JSONArray(data);
+                                    final BestRouteDataModel[] driver = new BestRouteDataModel[jArray.length()];
+                                    JSONObject json;
+                                    if (jArray.length() == 0) {
+                                        Log.d("Error 3 ", "Error3");
+
+                                        final Dialog dialog = new Dialog(c);
+                                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                        dialog.setContentView(R.layout.noroutesdialog);
+                                        Button btn = (Button) dialog.findViewById(R.id.noroute_id);
+                                        TextView Text_3 = (TextView) dialog.findViewById(R.id.Text_3);
+                                        dialog.show();
+                                        Text_3.setText(R.string.no_permits);
+
+                                        btn.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                dialog.dismiss();
+
+                                            }
+                                        });
+
+                                    }
+
+
+                                    for (int i = 0; i < jArray.length(); i++) {
+                                        try {
+                                            BestRouteDataModel item = new BestRouteDataModel(Parcel.obtain());
+
+                                            json = jArray.getJSONObject(i);
+                                            item.setFromEm(json.getString("CurrentPassengers"));
+                                            Driver_Current_Passnger = json.getString("CurrentPassengers");
+
+//                                            if (json.getString("CurrentPassengers").equals("0")) {
+//                                                Toast.makeText(c, R.string.no_permits, Toast.LENGTH_SHORT).show();
+//                                            }
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                            Log.d("Error 1 ", e.toString());
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    Log.d("Error 2 ", e.toString());
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+                VolleySingleton.getInstance(HomePage.this).addToRequestQueue(stringRequest);
+            }
+            return null;
+        }
     }
+
+
 }

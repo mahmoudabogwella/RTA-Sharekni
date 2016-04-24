@@ -18,6 +18,7 @@ public class BestRouteDataModelDetails extends ArrayList<Parcelable> implements 
     public String ToEm;
     public String ToReg;
     public String PhotoURl;
+    public String LastSeen,GreenPoints,GreenCo2Saving;
 
     public Bitmap getDriverPhoto() {
         return DriverPhoto;
@@ -75,6 +76,13 @@ public class BestRouteDataModelDetails extends ArrayList<Parcelable> implements 
     public String RouteEnName,DriverName;
     public  String SDG_Route_Start_FromTime,Nationality_en,SDG_RouteDays;
 
+    public String getLastSeen() {
+        return LastSeen;
+    }
+
+    public void setLastSeen(String lastSeen) {
+        LastSeen = lastSeen;
+    }
 
     public String getPhotoURl() {
         return PhotoURl;
@@ -109,6 +117,9 @@ public class BestRouteDataModelDetails extends ArrayList<Parcelable> implements 
         SDG_Route_Start_FromTime=in.readString();
         Nationality_en=in.readString();
         SDG_RouteDays=in.readString();
+        LastSeen=in.readString();
+        GreenPoints=in.readString();
+        GreenCo2Saving=in.readString();
 
     }
 
@@ -212,6 +223,21 @@ public class BestRouteDataModelDetails extends ArrayList<Parcelable> implements 
         return ToReg;
     }
 
+    public String getGreenPoints() {
+        return GreenPoints;
+    }
+
+    public void setGreenPoints(String greenPoints) {
+        GreenPoints = greenPoints;
+    }
+
+    public String getGreenCo2Saving() {
+        return GreenCo2Saving;
+    }
+
+    public void setGreenCo2Saving(String greenCo2Saving) {
+        GreenCo2Saving = greenCo2Saving;
+    }
 
     public void setSDG_RouteDays(String SDG_RouteDays) {
         this.SDG_RouteDays = SDG_RouteDays;
@@ -263,6 +289,9 @@ public class BestRouteDataModelDetails extends ArrayList<Parcelable> implements 
         parcel.writeString(Nationality_en);
         parcel.writeString(SDG_RouteDays);
         parcel.writeString(DriverRating);
+        parcel.writeString(LastSeen);
+        parcel.writeString(GreenCo2Saving);
+        parcel.writeString(GreenPoints);
 
     }
 }

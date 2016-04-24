@@ -1,12 +1,15 @@
 package rta.ae.sharekni;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,16 +26,13 @@ import java.util.List;
 
 import rta.ae.sharekni.Arafa.Classes.GetData;
 
-/**
- * Created by Nezar Saleh on 10/6/2015.
- */
 public class Ride_Details_Passengers_Adapter extends BaseAdapter {
+    public static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 2;
 
+    int NoOfStars, New_Starts;
     private Activity activity;
     private LayoutInflater inflater;
     private List<Ride_Details_Passengers_DataModel> PassengersItems;
-    Ride_Details_Passengers_DataModel m;
-    int NoOfStars;
 
 
     public Ride_Details_Passengers_Adapter(Activity activity, List<Ride_Details_Passengers_DataModel> PassengersItems) {
@@ -57,7 +57,7 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
 
         if (inflater == null)
@@ -75,19 +75,10 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
         RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.ratingBar2);
         ratingBar.setStepSize(1);
 //        ratingBar.setRating(m.getRate());
-
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                NoOfStars = (int) rating;
-                new ratePassenger().execute();
-            }
-        });
-
-
-        m = PassengersItems.get(position);
+        final Ride_Details_Passengers_DataModel m = PassengersItems.get(position);
         final StringBuffer res = new StringBuffer();
         String[] strArr = m.getAccountName().split(" ");
+        NoOfStars = m.getRate();
         for (String str : strArr) {
             char[] stringArray = str.trim().toCharArray();
             stringArray[0] = Character.toUpperCase(stringArray[0]);
@@ -96,7 +87,16 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
         }
         AccountName.setText(res);
         AccountNationalityEn.setText(m.getAccountNationalityEn());
+        ratingBar.setRating(NoOfStars);
 
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                New_Starts = (int) rating;
+                int passengetId = m.getPassengerId();
+                new ratePassenger(passengetId, New_Starts, m.getDriverId(), m.getRouteId()).execute();
+            }
+        });
 
         Driver_Remove_passenger.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +110,7 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
 
                                 GetData gd = new GetData();
                                 try {
-                                    String response = gd.Driver_Remove_Passenger(m.getPassengerId());
+                                    String response = gd.Driver_Remove_Passenger(PassengersItems.get(position).getID());
                                     Log.d("delete passenger", response);
 //                    Toast.makeText(activity, response, Toast.LENGTH_SHORT).show();
                                     if (response.equals("\"1\"")) {
@@ -123,14 +123,13 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
 
                             }
                         })
-                        .setNegativeButton(R.string.Cancel_msg, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
                                 dialog.dismiss();
 
                             }
                         }).setIcon(android.R.drawable.ic_dialog_alert).show();
-
             }
         });
 
@@ -141,15 +140,25 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
                 if (m.getAccountMobile() == null || m.getAccountMobile().equals("")) {
                     Toast.makeText(activity, R.string.No_Phone_Number_msg, Toast.LENGTH_SHORT).show();
                 } else {
+                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Request missing location permission.
+                        ActivityCompat.requestPermissions(activity,
+                                new String[]{Manifest.permission.CALL_PHONE},
+                                MY_PERMISSIONS_REQUEST_CALL_PHONE
+                        );
+                    } else {
 
-                    try {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + PassengersItems.get(position).getAccountMobile()));
+                            activity.startActivity(intent);
+                        } catch (SecurityException e) {
+                            Log.d("Passngr list", e.toString());
+                        }
 
 
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + m.getAccountMobile()));
-                        activity.startActivity(intent);
-                    } catch (SecurityException e) {
-                        Log.d("Passngr list", e.toString());
                     }
+
 
                 }
             }
@@ -159,10 +168,10 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
         passenger_lits_item_Msg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (m.getAccountMobile() == null || m.getAccountMobile().equals("")) {
-                    Toast.makeText(activity, "No Phone Number", Toast.LENGTH_SHORT).show();
+                if (m.getAccountMobile() == null || m.getAccountMobile().equals("") || m.getAccountMobile().equals("null")) {
+                    Toast.makeText(activity, R.string.No_Phone_Number_msg, Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + m.getAccountMobile()));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + PassengersItems.get(position).getAccountMobile()));
                     intent.putExtra("sms_body", "Hello " + m.getAccountMobile());
                     activity.startActivity(intent);
                 }
@@ -179,13 +188,23 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
     private class ratePassenger extends AsyncTask {
 
         String res;
+        int passengerId;
+        int Stars, Driver_ID, Route_ID;
+
+        public ratePassenger(int passengetId, int Stars, int Driver_ID, int Route_ID) {
+            this.passengerId = passengetId;
+            this.Stars = Stars;
+            this.Driver_ID = Driver_ID;
+            this.Route_ID = Route_ID;
+
+        }
 
         @Override
         protected void onPostExecute(Object o) {
             Log.d("res", res);
-            if (res.equals("\"1\"")){
+            if (res.equals("\"1\"")) {
                 Toast.makeText(activity, R.string.rate_submitted, Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 Toast.makeText(activity, R.string.rate_submit_failed, Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(o);
@@ -195,11 +214,58 @@ public class Ride_Details_Passengers_Adapter extends BaseAdapter {
         protected Object doInBackground(Object[] params) {
             GetData gd = new GetData();
             try {
-                res = gd.Driver_RatePassenger(m.getDriverId(), m.getPassengerId(), m.getRouteId(), NoOfStars);
+                res = gd.Driver_RatePassenger(Driver_ID, passengerId, Route_ID, Stars);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;
         }
     }
+
+
+
+
+
+
+
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED  ) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 }

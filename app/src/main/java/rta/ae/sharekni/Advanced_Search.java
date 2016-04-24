@@ -22,6 +22,8 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -54,6 +56,7 @@ import rta.ae.sharekni.Arafa.Classes.GetData;
 public class Advanced_Search extends AppCompatActivity implements View.OnClickListener {
 
     char i = 'N';
+    String IS_Smoking ="";
     static final int DILOG_ID = 0;
     static final int TIME_DIALOG_ID = 999;
     int Single_Periodic_ID;
@@ -97,8 +100,10 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
     TextView Advanced_txt_Selecet_Start_Point;
     TextView FemaleMaleTxt2;
     TextView advanced_search_Preferred_Lang_txt;
+    int Language_ID;
     TextView Advanced_txt_year;
     TextView advanced_search_Age_Range_txt;
+    int Advanced_Search_Age_Range_ID;
     TextView Advanced_txt_beforeCal;
     ImageView Periodic_SingleRide, singleRide_Periodic, Advanced_malefemale1, Advanced_femalemale2;
     ListView lang_lv;
@@ -116,11 +121,14 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
 
     int i2 = 0;
     String From_EmirateEnName_str, From_RegionEnName_str, To_EmirateEnName_str, To_RegionEnName_str;
-    int From_Em_Id_2 = -1 , From_Reg_Id_2 = -1, To_Em_Id_2, To_Reg_Id_2;
+    int From_Em_Id_2 = -1, From_Reg_Id_2 = -1, To_Em_Id_2 = -1, To_Reg_Id_2 = -1;
 
     ImageView save_off, save_on;
     TextView save_search_txt;
     int savefind = 0;
+
+    CheckBox check_Both, Check_Male, Check_Female;
+    CheckBox Check_Smoking,Check_NotSmoking;
 
     private Toolbar toolbar;
     private DatePickerDialog.OnDateSetListener dPickerListener = new DatePickerDialog.OnDateSetListener() {
@@ -167,11 +175,58 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_advanced__search);
+
+        Advanced_txt_year = (TextView) findViewById(R.id.Advanced_search_txt_yaer);
+        Advanced_txt_beforeCal = (TextView) findViewById(R.id.Advanced_textview50);
+        Advanced_pickup_relative = (RelativeLayout) findViewById(R.id.advanced_search_pickup_relative);
+        Advanced_txt_Selecet_Start_Point = (TextView) findViewById(R.id.Advanced_txt_Selecet_Start_Point);
+        Advanced_dropOff_relative = (RelativeLayout) findViewById(R.id.advanced_search_dropOff_relative);
+        Advanced_txt_Select_Dest = (TextView) findViewById(R.id.Advanced_txt_Select_Dest);
+        Advanced_txt_time_selected = (TextView) findViewById(R.id.Advanced_txt_time_selected);
+        Advanced_before_Time = (TextView) findViewById(R.id.Advanced_textview51);
+        Advanced_btn_search_page = (Button) findViewById(R.id.btn_advanced_search_page);
+        Periodic_SingleRide = (ImageView) findViewById(R.id.Periodic_SingleRide);
+        singleRide_Periodic = (ImageView) findViewById(R.id.singleRide_Periodic);
+//        Advanced_malefemale1 = (ImageView) findViewById(R.id.Advanced_malefemale1);
+//        Advanced_femalemale2 = (ImageView) findViewById(R.id.Advanced_femalemale2);
+        advanced_search_Nat = (AutoCompleteTextView) findViewById(R.id.advanced_search_Nat);
+//        maleFemaleTxt = (TextView) findViewById(R.id.malefemale_txt);
+//      FemaleMaleTxt = (TextView) findViewById(R.id.femalemale_txt);
+        maleFemaleTxt2 = (TextView) findViewById(R.id.malefemale_txt2);
+        FemaleMaleTxt2 = (TextView) findViewById(R.id.femalemale_txt2);
+        advanced_search_Preferred_Lang_txt = (TextView) findViewById(R.id.advanced_search_Preferred_Lang_txt);
+        advanced_search_Age_Range_txt = (TextView) findViewById(R.id.advanced_search_Age_Range_txt);
+//        quickSearch_pickUp = (Button) findViewById(R.id.quickSearch_pickUp);
+        //      quickSearch_Dropoff = (Button) findViewById(R.id.advanced_search__Dropoff);
+        dvanced_Destination = (Button) findViewById(R.id.dvanced_Destination);
+
+        // quickSearch_pickUp.setOnClickListener(this);
+        //Advanced_pickup_relative.setOnClickListener(this);
+        //  quickSearch_Dropoff.setOnClickListener(this);
+        //  Advanced_dropOff_relative.setOnClickListener(this);
+
+
+        save_off = (ImageView) findViewById(R.id.save_off);
+        save_on = (ImageView) findViewById(R.id.save_on);
+        save_search_txt = (TextView) findViewById(R.id.save_search_txt);
+
+
+        check_Both = (CheckBox) findViewById(R.id.check_Both);
+        Check_Male = (CheckBox) findViewById(R.id.Check_Male);
+        Check_Female = (CheckBox) findViewById(R.id.Check_Female);
+
+        Check_Smoking = (CheckBox) findViewById(R.id.Check_Smoking);
+        Check_NotSmoking= (CheckBox) findViewById(R.id.Check_NotSmoking);
 
         i2 = 0;
         try {
             if (PickUpActivity.getInstance() != null) {
+
                 Intent intent = getIntent();
+
+                Bundle b = intent.getBundleExtra("options");
+                Log.d("bundle", String.valueOf(b));
                 From_Em_Id_2 = intent.getIntExtra("From_Em_Id", 0);
                 From_Reg_Id_2 = intent.getIntExtra("From_Reg_Id", 0);
                 To_Em_Id_2 = intent.getIntExtra("To_Em_Id", 0);
@@ -183,7 +238,70 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
                 To_EmirateEnName_str = intent.getStringExtra("To_EmirateEnName");
                 To_RegionEnName_str = intent.getStringExtra("To_RegionEnName");
                 i2 = 1;
-
+//                if (b != null) {
+//                    savefind = b.getInt("savefind");
+//                    if (savefind == 1) {
+//                        save_off.setVisibility(View.INVISIBLE);
+//                        save_on.setVisibility(View.VISIBLE);
+//                        save_search_txt.setTextColor(Color.RED);
+//                    }
+//                    if (savefind == 0) {
+//                        save_on.setVisibility(View.INVISIBLE);
+//                        save_off.setVisibility(View.VISIBLE);
+//                        save_search_txt.setTextColor(Color.GRAY);
+//                    }
+//                    IS_Smoking = b.getString("IS_Smoking");
+//                    if (IS_Smoking != null && IS_Smoking.equals("1")) {
+//                        Check_NotSmoking.setChecked(false);
+//                        Check_Smoking.setChecked(true);
+//                    } else if (IS_Smoking != null && IS_Smoking.equals("0")) {
+//                        Check_NotSmoking.setChecked(true);
+//                        Check_Smoking.setChecked(false);
+//                    }
+//                    if (b.getString("full_date") != null) {
+//                        Advanced_txt_beforeCal.setVisibility(View.INVISIBLE);
+//                        Advanced_txt_year.setText(b.getString("full_date"));
+//                    }
+//                    if (!b.getString("time").equals("")) {
+//                        Advanced_before_Time.setVisibility(View.INVISIBLE);
+//                        Advanced_txt_time_selected.setText(b.getString("time"));
+//                    }
+//                    Single_Periodic_ID = b.getInt("Single_Periodic_ID");
+//                    if (Single_Periodic_ID == 1) {
+//                        singleRide_Periodic.setVisibility(View.INVISIBLE);
+//                        Periodic_SingleRide.setVisibility(View.VISIBLE);
+//                        maleFemaleTxt2.setTextColor(Color.GRAY);
+//                        FemaleMaleTxt2.setTextColor(Color.RED);
+//                    } else if (Single_Periodic_ID == 0) {
+//                        Periodic_SingleRide.setVisibility(View.INVISIBLE);
+//                        singleRide_Periodic.setVisibility(View.VISIBLE);
+//                        Single_Periodic_ID = 0;
+//                        maleFemaleTxt2.setTextColor(Color.RED);
+//                        FemaleMaleTxt2.setTextColor(Color.GRAY);
+//                    }
+//                    if (b.getString("advanced_search_Nat") != null) {
+//                        advanced_search_Nat.setText(b.getString("advanced_search_Nat"));
+//                        Nationality_ID = b.getInt("Nationality_ID");
+//                    }
+//                    if (b.getString("advanced_search_Preferred_Lang_txt") != null) {
+//                        advanced_search_Preferred_Lang_txt.setText(b.getString("advanced_search_Preferred_Lang_txt"));
+//                        Nationality_ID = b.getInt("Nationality_ID");
+//                    }
+//                    if (b.getString("advanced_search_Age_Range_txt") != null){
+//                        advanced_search_Age_Range_txt.setText(b.getString("advanced_search_Age_Range_txt"));
+//                    }
+//                    i = b.getChar("Gender");
+//                    if (i == 'N') {
+//                        Check_Male.setChecked(false);
+//                        Check_Female.setChecked(false);
+//                    } else if (i == 'M') {
+//                        Check_Male.setChecked(true);
+//                        Check_Female.setChecked(false);
+//                    } else if (i == 'F') {
+//                        Check_Male.setChecked(false);
+//                        Check_Female.setChecked(true);
+//                    }
+//                }
                 try {
 
                     if (From_EmirateEnName_str.equals("null") || From_EmirateEnName_str.equals("")) {
@@ -259,7 +377,6 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
         month_x = cal.get(Calendar.MONTH);
         day_x = cal.get(Calendar.DAY_OF_MONTH);
 
-        setContentView(R.layout.activity_advanced__search);
         showDialogOnButtonClick();
         showTimeDialogOnButtonClick();
         mContext = this;
@@ -268,39 +385,65 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
 
         final Intent intent = getIntent();
         MyId = intent.getIntExtra("ID", 0);
-        Advanced_txt_year = (TextView) findViewById(R.id.Advanced_search_txt_yaer);
-        Advanced_txt_beforeCal = (TextView) findViewById(R.id.Advanced_textview50);
-        Advanced_pickup_relative = (RelativeLayout) findViewById(R.id.advanced_search_pickup_relative);
-        Advanced_txt_Selecet_Start_Point = (TextView) findViewById(R.id.Advanced_txt_Selecet_Start_Point);
-        Advanced_dropOff_relative = (RelativeLayout) findViewById(R.id.advanced_search_dropOff_relative);
-        Advanced_txt_Select_Dest = (TextView) findViewById(R.id.Advanced_txt_Select_Dest);
-        Advanced_txt_time_selected = (TextView) findViewById(R.id.Advanced_txt_time_selected);
-        Advanced_before_Time = (TextView) findViewById(R.id.Advanced_textview51);
-        Advanced_btn_search_page = (Button) findViewById(R.id.btn_advanced_search_page);
-        Periodic_SingleRide = (ImageView) findViewById(R.id.Periodic_SingleRide);
-        singleRide_Periodic = (ImageView) findViewById(R.id.singleRide_Periodic);
-        Advanced_malefemale1 = (ImageView) findViewById(R.id.Advanced_malefemale1);
-        Advanced_femalemale2 = (ImageView) findViewById(R.id.Advanced_femalemale2);
-        advanced_search_Nat = (AutoCompleteTextView) findViewById(R.id.advanced_search_Nat);
-        maleFemaleTxt = (TextView) findViewById(R.id.malefemale_txt);
-        FemaleMaleTxt = (TextView) findViewById(R.id.femalemale_txt);
-        maleFemaleTxt2 = (TextView) findViewById(R.id.malefemale_txt2);
-        FemaleMaleTxt2 = (TextView) findViewById(R.id.femalemale_txt2);
-        advanced_search_Preferred_Lang_txt = (TextView) findViewById(R.id.advanced_search_Preferred_Lang_txt);
-        advanced_search_Age_Range_txt = (TextView) findViewById(R.id.advanced_search_Age_Range_txt);
-//        quickSearch_pickUp = (Button) findViewById(R.id.quickSearch_pickUp);
-        //      quickSearch_Dropoff = (Button) findViewById(R.id.advanced_search__Dropoff);
-        dvanced_Destination = (Button) findViewById(R.id.dvanced_Destination);
-
-        // quickSearch_pickUp.setOnClickListener(this);
-        //Advanced_pickup_relative.setOnClickListener(this);
-        //  quickSearch_Dropoff.setOnClickListener(this);
-        //  Advanced_dropOff_relative.setOnClickListener(this);
 
 
-        save_off = (ImageView) findViewById(R.id.save_off);
-        save_on = (ImageView) findViewById(R.id.save_on);
-        save_search_txt = (TextView) findViewById(R.id.save_search_txt);
+        Check_Smoking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    IS_Smoking="1";
+                    Check_NotSmoking.setChecked(false);
+                }
+            }
+        });
+
+
+        Check_NotSmoking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    IS_Smoking="0";
+                    Check_Smoking.setChecked(false);
+                }
+            }
+        });
+
+
+
+        check_Both.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    i = 'N';
+                    Check_Male.setChecked(false);
+                    Check_Female.setChecked(false);
+                }
+            }
+        });
+
+
+        Check_Male.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    i = 'M';
+                    check_Both.setChecked(false);
+                    Check_Female.setChecked(false);
+                }
+            }
+        });
+
+
+        Check_Female.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    i = 'F';
+                    check_Both.setChecked(false);
+                    Check_Male.setChecked(false);
+                }
+            }
+        });
 
 
         age = new age();
@@ -329,8 +472,32 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
         dvanced_Destination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Bundle b = new Bundle();
+                b.putInt("savefind", savefind);
+                b.putString("IS_Smoking", IS_Smoking);
+                b.putString("full_date", Advanced_full_date);
+                if (!Advanced_txt_time_selected.getText().toString().equals(getString(R.string.start_time))){
+                    b.putString("time", Advanced_txt_time_selected.getText().toString());
+                }
+                b.putInt("Single_Periodic_ID", Single_Periodic_ID);
+                if (!advanced_search_Nat.getText().toString().equals(getString(R.string.pref_nat))){
+                    b.putString("advanced_search_Nat", advanced_search_Nat.getText().toString());
+                    b.putInt("Nationality_ID",Nationality_ID);
+                }
+                if (!advanced_search_Preferred_Lang_txt.getText().toString().equals(getString(R.string.choose_lang))){
+                    b.putString("advanced_search_Preferred_Lang_txt", advanced_search_Preferred_Lang_txt.getText().toString());
+                    b.putInt("Nationality_ID",Nationality_ID);
+                }
+                if (!advanced_search_Age_Range_txt.getText().toString().equals(getString(R.string.choose_age))) {
+                    b.putString("advanced_search_Age_Range_txt", advanced_search_Age_Range_txt.getText().toString());
+                    b.putInt("Advanced_Search_Age_Range_ID",Advanced_Search_Age_Range_ID);
+                }
+                b.putChar("Gender", i);
+
                 Intent intent = new Intent(getBaseContext(), PickUpActivity.class);
                 intent.putExtra("FALG_SEARCH", 2);
+                intent.putExtra("options",b);
                 networkCheck.cancel(true);
                 nat.cancel(true);
                 lan.cancel(true);
@@ -389,63 +556,67 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
         });
 
 
-        Advanced_malefemale1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Advanced_malefemale1.setVisibility(View.INVISIBLE);
-                Advanced_femalemale2.setVisibility(View.VISIBLE);
-                maleFemaleTxt.setTextColor(Color.GRAY);
-                FemaleMaleTxt.setTextColor(Color.RED);
-                i = 'F';
-
-            }
-        });
-
-
-        Advanced_femalemale2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Advanced_femalemale2.setVisibility(View.INVISIBLE);
-                Advanced_malefemale1.setVisibility(View.VISIBLE);
-                maleFemaleTxt.setTextColor(Color.RED);
-                FemaleMaleTxt.setTextColor(Color.GRAY);
-                i = 'M';
-
-            }
-        });
-
-        FemaleMaleTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                maleFemaleTxt.setTextColor(Color.GRAY);
-                FemaleMaleTxt.setTextColor(Color.RED);
-                Advanced_malefemale1.setVisibility(View.INVISIBLE);
-                Advanced_femalemale2.setVisibility(View.VISIBLE);
-                i = 'F';
-
-            }
-        });
-
-        maleFemaleTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                maleFemaleTxt.setTextColor(Color.RED);
-                FemaleMaleTxt.setTextColor(Color.GRAY);
-                Advanced_malefemale1.setVisibility(View.VISIBLE);
-                Advanced_femalemale2.setVisibility(View.INVISIBLE);
-                i = 'M';
-            }
-        });
+//        Advanced_malefemale1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Advanced_malefemale1.setVisibility(View.INVISIBLE);
+//                Advanced_femalemale2.setVisibility(View.VISIBLE);
+//                maleFemaleTxt.setTextColor(Color.GRAY);
+//                FemaleMaleTxt.setTextColor(Color.RED);
+//                i = 'F';
+//
+//            }
+//        });
+//
+//
+//        Advanced_femalemale2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Advanced_femalemale2.setVisibility(View.INVISIBLE);
+//                Advanced_malefemale1.setVisibility(View.VISIBLE);
+//                maleFemaleTxt.setTextColor(Color.RED);
+//                FemaleMaleTxt.setTextColor(Color.GRAY);
+//                i = 'M';
+//
+//            }
+//        });
+//
+//        FemaleMaleTxt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                maleFemaleTxt.setTextColor(Color.GRAY);
+//                FemaleMaleTxt.setTextColor(Color.RED);
+//                Advanced_malefemale1.setVisibility(View.INVISIBLE);
+//                Advanced_femalemale2.setVisibility(View.VISIBLE);
+//                i = 'F';
+//
+//            }
+//        });
+//
+//        maleFemaleTxt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                maleFemaleTxt.setTextColor(Color.RED);
+//                FemaleMaleTxt.setTextColor(Color.GRAY);
+//                Advanced_malefemale1.setVisibility(View.VISIBLE);
+//                Advanced_femalemale2.setVisibility(View.INVISIBLE);
+//                i = 'M';
+//            }
+//        });
 
 
         save_off.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                save_off.setVisibility(View.INVISIBLE);
-                save_on.setVisibility(View.VISIBLE);
-                save_search_txt.setTextColor(Color.RED);
-                savefind = 1;
+                if ((From_Em_Id_2 != -1) && (From_Reg_Id_2 != -1) && (To_Em_Id_2 != -1) && (To_Reg_Id_2 != -1) && (From_Em_Id_2 != 0) && (From_Reg_Id_2 != 0) && (To_Em_Id_2 != 0) && (To_Reg_Id_2 != 0)) {
+                    save_off.setVisibility(View.INVISIBLE);
+                    save_on.setVisibility(View.VISIBLE);
+                    save_search_txt.setTextColor(Color.RED);
+                    savefind = 1;
+                }else {
+                    Toast.makeText(Advanced_Search.this, R.string.saveSearch_Error, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -498,31 +669,38 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
 
             public void onClick(View v) {
 
-                if (From_Em_Id_2 != -1 && From_Reg_Id_2 != -1){
+                if (From_Em_Id_2 != -1 && From_Reg_Id_2 != -1 && From_Em_Id_2 != 0 && From_Reg_Id_2 != 0) {
 
                     Intent intent1 = new Intent(getBaseContext(), QuickSearchResults.class);
-                intent1.putExtra("From_Em_Id", From_Em_Id_2);
-                intent1.putExtra("To_Em_Id", To_Em_Id_2);
-                intent1.putExtra("From_Reg_Id", From_Reg_Id_2);
-                intent1.putExtra("To_Reg_Id", To_Reg_Id_2);
-                intent1.putExtra("From_EmirateEnName", From_EmirateEnName_str);
-                intent1.putExtra("From_RegionEnName", From_RegionEnName_str);
-                intent1.putExtra("To_EmirateEnName", To_EmirateEnName_str);
-                intent1.putExtra("To_RegionEnName", To_RegionEnName_str);
-                intent1.putExtra("Gender", i);
-                intent1.putExtra("SaveFind", savefind);
+                    intent1.putExtra("From_Em_Id", From_Em_Id_2);
+                    intent1.putExtra("To_Em_Id", To_Em_Id_2);
+                    intent1.putExtra("From_Reg_Id", From_Reg_Id_2);
+                    intent1.putExtra("To_Reg_Id", To_Reg_Id_2);
+                    intent1.putExtra("From_EmirateEnName", From_EmirateEnName_str);
+                    intent1.putExtra("From_RegionEnName", From_RegionEnName_str);
+                    intent1.putExtra("To_EmirateEnName", To_EmirateEnName_str);
+                    intent1.putExtra("To_RegionEnName", To_RegionEnName_str);
+                    intent1.putExtra("Gender", i);
+                    intent1.putExtra("SaveFind", savefind);
+                    intent1.putExtra("Smokers", IS_Smoking);
+                    intent1.putExtra("IsRounded",Single_Periodic_ID);
+                    intent1.putExtra("MapKey", "Advanced_Search");
+                    intent1.putExtra("AgeRange",Advanced_Search_Age_Range_ID);
+                    intent1.putExtra("Nationality_ID",Nationality_ID);
+                    intent1.putExtra("Language_ID",Language_ID);
+                    intent1.putExtra("InviteType","");
 
-                networkCheck.cancel(true);
-                nat.cancel(true);
-                lan.cancel(true);
-                age.cancel(true);
+                    networkCheck.cancel(true);
+                    nat.cancel(true);
+                    lan.cancel(true);
+                    age.cancel(true);
 
-                startActivity(intent1);
+                    startActivity(intent1);
 
-                i2 = 1;
+                    i2 = 1;
 
 
-                  }else {
+                } else {
                     Toast.makeText(Advanced_Search.this, R.string.select_start_point, Toast.LENGTH_SHORT).show();
                 }
 
@@ -531,6 +709,7 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
 
         networkCheck.execute();
     }   //  on create
+
 
     private class networkCheck extends AsyncTask {
 
@@ -690,9 +869,9 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 TextView txt_lang_name = (TextView) view.findViewById(R.id.row_name);
                                 TextView txt_lang_id = (TextView) view.findViewById(R.id.row_id);
-                                //   Language_ID = Integer.parseInt(txt_lang_id.getText().toString());
+                                   Language_ID = Integer.parseInt(txt_lang_id.getText().toString());
                                 advanced_search_Preferred_Lang_txt.setText(txt_lang_name.getText().toString());
-                                // Log.d("id of lang", "" + Language_ID);
+                                 Log.d("id of lang", "" + Language_ID);
                                 Languages_Dilaog.dismiss();
                             }
                         });
@@ -799,9 +978,9 @@ public class Advanced_Search extends AppCompatActivity implements View.OnClickLi
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 TextView txt_lang_name = (TextView) view.findViewById(R.id.row_name);
                                 TextView txt_lang_id = (TextView) view.findViewById(R.id.row_id);
-                                //   Language_ID = Integer.parseInt(txt_lang_id.getText().toString());
+                                Advanced_Search_Age_Range_ID = Integer.parseInt(txt_lang_id.getText().toString());
                                 advanced_search_Age_Range_txt.setText(txt_lang_name.getText().toString());
-                                // Log.d("id of lang", "" + Language_ID);
+                                 Log.d("id of lang", "" + Advanced_Search_Age_Range_ID);
                                 Languages_Dilaog.dismiss();
                             }
                         });

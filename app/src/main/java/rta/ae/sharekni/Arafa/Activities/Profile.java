@@ -1,5 +1,6 @@
 package rta.ae.sharekni.Arafa.Activities;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,21 +8,26 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +43,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import rta.ae.sharekni.Arafa.Classes.AppController;
 import rta.ae.sharekni.Arafa.Classes.GetData;
@@ -49,9 +56,10 @@ import rta.ae.sharekni.R;
 import rta.ae.sharekni.RideDetailsPassenger;
 
 public class Profile extends AppCompatActivity {
+    public static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 2;
 
     TextView TopName, NationalityEnName;
-    ImageView profile_msg,profile_call;
+    ImageView profile_msg, profile_call;
     ListView lv_driver;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     String URL_Photo = GetData.PhotoURL;
@@ -62,9 +70,36 @@ public class Profile extends AppCompatActivity {
     String AccountType;
     String ID;
     private Toolbar toolbar;
-    String FirstName,SecondName,ThirdName,Full_Name;
+    String FirstName, SecondName, ThirdName, Full_Name;
     jsoning jsoning;
     TextView Driver_profile_Item_rate;
+    String IsMobileVerified, IsPhotoVerified;
+    ImageView GreenPointCar_im;
+    TextView Green_Points_txt,Green_Km_txt,Green_Routes_txt,Green_Vehicles_txt,Green_co2_saving_txt;
+
+    String Locale_Str;
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, RadioGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +125,35 @@ public class Profile extends AppCompatActivity {
         profile_call = (ImageView) findViewById(R.id.profile_call);
         Driver_profile_Item_rate = (TextView) findViewById(R.id.Driver_profile_Item_rate);
 
+        Green_Points_txt= (TextView) findViewById(R.id.Green_Points_txt);
+        Green_Km_txt= (TextView) findViewById(R.id.Green_Km_txt);
+        Green_Routes_txt = (TextView) findViewById(R.id.Green_Routes_txt);
+        Green_Vehicles_txt = (TextView) findViewById(R.id.Green_Vehicles_txt);
+        Green_co2_saving_txt = (TextView) findViewById(R.id.Green_co2_saving_txt);
+        GreenPointCar_im = (ImageView) findViewById(R.id.GreenPointCar_im);
+
+
+
+
+        Locale locale = Locale.getDefault();
+        Locale_Str = locale.toString();
+
+        Log.d("test locale", Locale_Str);
+
+
+        if (Locale_Str.contains("en")) {
+
+
+            GreenPointCar_im.setImageResource(R.drawable.greenpointcar);
+
+        } else {
+
+            GreenPointCar_im.setImageResource(R.drawable.greencarar);
+
+        }
+
+
+
         myPrefs = this.getSharedPreferences("myPrefs", 0);
         Passenger_ID = Integer.parseInt(myPrefs.getString("account_id", "0"));
         AccountType = myPrefs.getString("account_type", null);
@@ -100,57 +164,53 @@ public class Profile extends AppCompatActivity {
         ProgressDialog pDialog = new ProgressDialog(this);
         pDialog.setMessage(getString(R.string.loading) + "...");
         pDialog.show();
-        jsoning = new jsoning(lv_driver,pDialog,this);
+        jsoning = new jsoning(lv_driver, pDialog, this);
         jsoning.execute();
 
         try {
             final JSONObject json = j.GetDriverById(Driver_ID);
 
-           // TopName.setText(json.getString("FirstName") + " " + json.getString("MiddleName"));
+            // TopName.setText(json.getString("FirstName") + " " + json.getString("MiddleName"));
 
-            Full_Name="";
-            FirstName= json.getString("FirstName");
-            if (FirstName.equals("")){
-                Full_Name+="";
-            }else{
+            Full_Name = "";
+            FirstName = json.getString("FirstName");
+            if (FirstName.equals("")) {
+                Full_Name += "";
+            } else {
                 FirstName = FirstName.substring(0, 1).toUpperCase() + FirstName.substring(1);
-                Log.d("First Name",FirstName);
-                Full_Name+=FirstName;
+                Log.d("First Name", FirstName);
+                Full_Name += FirstName;
 
             }
 
 
             SecondName = json.getString("MiddleName");
-            if (SecondName.equals("")){
-                Full_Name+=" ";
-            }else{
+            if (SecondName.equals("")) {
+                Full_Name += " ";
+            } else {
 
-                Log.d("Second name 1",SecondName);
-                SecondName =  SecondName.substring(0, 1).toUpperCase() + SecondName.substring(1);
-                Log.d("Second name 2",SecondName);
-                Full_Name+=" ";
-                Full_Name+=SecondName;
+                Log.d("Second name 1", SecondName);
+                SecondName = SecondName.substring(0, 1).toUpperCase() + SecondName.substring(1);
+                Log.d("Second name 2", SecondName);
+                Full_Name += " ";
+                Full_Name += SecondName;
             }
 
             ThirdName = json.getString("LastName");
-            if (ThirdName.equals("")){
+            if (ThirdName.equals("")) {
 
-                Full_Name+=" ";
-            }else {
+                Full_Name += " ";
+            } else {
 
-                Log.d("Second name 1",ThirdName);
-                ThirdName =  ThirdName.substring(0, 1).toUpperCase() + ThirdName.substring(1);
-                Log.d("Second name 2",ThirdName);
-                Full_Name+=" ";
-                Full_Name+=ThirdName;
+                Log.d("Second name 1", ThirdName);
+                ThirdName = ThirdName.substring(0, 1).toUpperCase() + ThirdName.substring(1);
+                Log.d("Second name 2", ThirdName);
+                Full_Name += " ";
+                Full_Name += ThirdName;
             }
 
 
-          //  Driver_profile_Item_rate.setText(json.getString("AccountRating"));
-
-
-
-
+            //  Driver_profile_Item_rate.setText(json.getString("AccountRating"));
 
 
             TopName.setText(Full_Name);
@@ -160,32 +220,99 @@ public class Profile extends AppCompatActivity {
             im.stringRequest(json.getString("PhotoPath"), Photo, Profile.this);
 //            Photo.setImageUrl(URL_Photo + json.getString("PhotoPath"), imageLoader);
             Driver_profile_Item_rate.setText(json.getString("AccountRating"));
+
+            IsMobileVerified = json.getString("IsMobileVerified");
+            IsPhotoVerified = json.getString("IsPhotoVerified");
+
+            int x1 = json.getInt("GreenPoints");
+            int x2 = json.getInt("TotalDistance");
+
+            int x3 = json.getInt("CO2Saved");
+            x3 = x3/1000;
+
+            Green_co2_saving_txt.setText(String.valueOf(x3));
+            Green_Points_txt.setText(String.valueOf(x1));
+            Green_Km_txt.setText(String.valueOf(x2));
+
+
+            if (json.getInt("DriverMyRidesCount")>2) {
+
+                Green_Routes_txt.setText("2");
+            }else {
+                Green_Routes_txt.setText(json.getString("DriverMyRidesCount"));
+            }
+
+
+
+            Green_Vehicles_txt.setText(json.getString("VehiclesCount"));
+
+           // Green_co2_saving_txt.setText(json.getString("CO2Saved"));
+
+
+
+
+
+
             profile_call.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = null;
-                    try {
-                        intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + json.getString("Mobile")));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+
+                    if (IsMobileVerified.equals("false")) {
+                        Toast.makeText(getBaseContext(), R.string.No_Phone_number , Toast.LENGTH_SHORT).show();
+
+                    } else if (IsMobileVerified.equals("true")) {
+
+                        if (ActivityCompat.checkSelfPermission(Profile.this, Manifest.permission.CALL_PHONE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            // Request missing location permission.
+                            ActivityCompat.requestPermissions(Profile.this,
+                                    new String[]{Manifest.permission.CALL_PHONE},
+                                    MY_PERMISSIONS_REQUEST_CALL_PHONE
+                            );
+                        } else {
+
+                            Intent intent = null;
+                            try {
+
+                                intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + json.getString("Mobile")));
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            startActivity(intent);
+
+
+                        }
+
+
                     }
-                    startActivity(intent);
                 }
             });
 
             profile_msg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = null;
-                    try {
-                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + json.getString("Mobile")));
-                        intent.putExtra("sms_body", getString(R.string.hello_world) + json.getString("FirstName"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+
+                    if (IsMobileVerified.equals("false")) {
+                        Toast.makeText(getBaseContext(), R.string.No_Phone_number , Toast.LENGTH_SHORT).show();
+
+                    } else if (IsMobileVerified.equals("true")) {
+
+                        Intent intent = null;
+                        try {
+                            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + json.getString("Mobile")));
+                            intent.putExtra("sms_body", getString(R.string.hello_world) + json.getString("FirstName"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        startActivity(intent);
+
+
                     }
-                    startActivity(intent);
+
                 }
             });
+
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
@@ -226,9 +353,10 @@ public class Profile extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object o) {
-            if (exists){
+            if (exists) {
                 ProfileRideAdapter arrayAdapter = new ProfileRideAdapter(Profile.this, R.layout.driver_profile_rides, driver);
                 lv.setAdapter(arrayAdapter);
+                setListViewHeightBasedOnChildren(lv);
                 lv.requestLayout();
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -248,7 +376,7 @@ public class Profile extends AppCompatActivity {
                             } else {
                                 Intent in = new Intent(Profile.this, Route.class);
                                 in.putExtra("RouteID", driver[i].getID());
-                                in.putExtra("RouteName",driver[i].getRouteName());
+                                in.putExtra("RouteName", driver[i].getRouteName());
                                 in.putExtra("PassengerID", Passenger_ID);
                                 Log.d("Last 3", String.valueOf(Passenger_ID));
                                 in.putExtra("DriverID", Driver_ID);
@@ -294,7 +422,7 @@ public class Profile extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         finish();
                                         Intent in = getIntent();
-                                        in.putExtra("DriverID",Driver_ID);
+                                        in.putExtra("DriverID", Driver_ID);
                                         startActivity(getIntent());
                                     }
                                 })
@@ -303,7 +431,7 @@ public class Profile extends AppCompatActivity {
                                         finish();
                                     }
                                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
-                        Toast.makeText(Profile.this,getString(R.string.connection_problem), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Profile.this, getString(R.string.connection_problem), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -382,7 +510,7 @@ public class Profile extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id==android.R.id.home){
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
@@ -393,13 +521,50 @@ public class Profile extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onBackPressed() {
         if (jsoning.getStatus() == AsyncTask.Status.RUNNING) {
             jsoning.cancel(true);
         }
         finish();
+    }
+
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+                    if (ActivityCompat.checkSelfPermission(Profile.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
 

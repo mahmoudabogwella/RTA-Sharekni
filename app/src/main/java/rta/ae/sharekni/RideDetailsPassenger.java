@@ -64,7 +64,6 @@ public class RideDetailsPassenger extends AppCompatActivity {
             FromRegionEnName, ToRegionEnName, FromEmirateEnName, ToEmirateEnName, StartFromTime, EndToTime_, AgeRange, PreferredGender, IsSmoking, ride_details_day_of_week, NationalityEnName, PrefLanguageEnName;
 
 
-
     String Gender_ste, Nat_txt, Smokers_str;
     int No_Seats;
 
@@ -110,6 +109,9 @@ public class RideDetailsPassenger extends AppCompatActivity {
     TextView Relative_REviews_Address_2;
     int NoOfStars;
 
+    String FromRegionEnName_Str, ToRegionEnName_Str, FromEmirateEnName_Str, ToEmirateEnName_Str;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,23 +144,13 @@ public class RideDetailsPassenger extends AppCompatActivity {
         Relative_REviews = (RelativeLayout) findViewById(R.id.Relative_REviews);
         Relative_REviews_Address_2 = (TextView) findViewById(R.id.Relative_REviews_Address_2);
 
-         ratingBar = (RatingBar) findViewById(R.id.ratingBar2);
+        ratingBar = (RatingBar) findViewById(R.id.ratingBar2);
         ratingBar.setStepSize(1);
-
-
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                NoOfStars = (int) rating;
-                new rateDriver().execute();
-            }
-        });
-
-
 
         Join_Ride_btn.setVisibility(View.INVISIBLE);
         //Pass_rate_Driver_btn.setVisibility(View.INVISIBLE);
-        ratingBar.setVisibility(View.INVISIBLE);
+        ratingBar.setVisibility(View.GONE);
+        Passenger_Review_Driver_Btn.setVisibility(View.GONE);
 
         // setListViewHeightBasedOnChildren(Driver_get_Review_lv);
         //setSupportActionBar(toolbar);
@@ -197,9 +189,11 @@ public class RideDetailsPassenger extends AppCompatActivity {
             if (in.getInt("FLAG_1") == 1) {
                 Join_Ride_btn.setVisibility(View.INVISIBLE);
                 ratingBar.setVisibility(View.VISIBLE);
+                Passenger_Review_Driver_Btn.setVisibility(View.VISIBLE);
 
-            }else {
+            } else {
                 Join_Ride_btn.setVisibility(View.VISIBLE);
+                Passenger_Review_Driver_Btn.setVisibility(View.GONE);
             }
         } catch (NullPointerException e) {
 
@@ -217,7 +211,7 @@ public class RideDetailsPassenger extends AppCompatActivity {
     }  //  on create
 
 
-    private class rateDriver extends AsyncTask{
+    private class rateDriver extends AsyncTask {
 
         String res;
 
@@ -225,9 +219,9 @@ public class RideDetailsPassenger extends AppCompatActivity {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             Log.d("res", res);
-            if (res.equals("\"1\"")){
+            if (res.equals("\"1\"")) {
                 Toast.makeText(RideDetailsPassenger.this, R.string.rate_submitted, Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 Toast.makeText(RideDetailsPassenger.this, R.string.rate_submit_failed, Toast.LENGTH_SHORT).show();
             }
         }
@@ -236,7 +230,7 @@ public class RideDetailsPassenger extends AppCompatActivity {
         protected Object doInBackground(Object[] params) {
             GetData gd = new GetData();
             try {
-               res = gd.Passenger_RateDriver(Driver_ID, Passenger_ID, Route_ID, NoOfStars);
+                res = gd.Passenger_RateDriver(Driver_ID, Passenger_ID, Route_ID, NoOfStars);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -278,9 +272,16 @@ public class RideDetailsPassenger extends AppCompatActivity {
 
 //            }
 
-            if (FLAG_HIDE_JOIN==2) {
+            if (FLAG_HIDE_JOIN == 2) {
 
                 ratingBar.setVisibility(View.VISIBLE);
+                Join_Ride_btn.setVisibility(View.INVISIBLE);
+                Passenger_Review_Driver_Btn.setVisibility(View.VISIBLE);
+
+            }
+            if (FLAG_HIDE_JOIN == 5) {
+
+
                 Join_Ride_btn.setVisibility(View.INVISIBLE);
 
             }
@@ -369,11 +370,26 @@ public class RideDetailsPassenger extends AppCompatActivity {
 
             if (exists) {
                 try {
+                    ratingBar.setRating(Float.parseFloat(j.Passenger_GetDriverRate(Driver_ID, Passenger_ID, Route_ID)));
+                    ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                        @Override
+                        public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                            NoOfStars = (int) rating;
+                            new rateDriver().execute();
+                        }
+                    });
                     days = "";
                     FromRegionEnName.setText(json.getString(getString(R.string.from_reg_en_name)));
                     ToRegionEnName.setText(json.getString(getString(R.string.fto_reg_en_name)));
                     FromEmirateEnName.setText(json.getString(getString(R.string.from_em_en_name)));
                     ToEmirateEnName.setText(json.getString(getString(R.string.to_em_en_name)));
+
+                    FromRegionEnName_Str = (json.getString(getString(R.string.from_reg_en_name)));
+                    ToRegionEnName_Str = (json.getString(getString(R.string.fto_reg_en_name)));
+                    FromEmirateEnName_Str = (json.getString(getString(R.string.from_em_en_name)));
+                    ToEmirateEnName_Str = (json.getString(getString(R.string.to_em_en_name)));
+
+
                     str_StartFromTime = json.getString("StartFromTime");
                     No_Seats = json.getInt("NoOfSeats");
                     if (No_Seats == 0) {
@@ -400,12 +416,12 @@ public class RideDetailsPassenger extends AppCompatActivity {
                     } else {
                         NationalityEnName.setText(json.getString(getString(R.string.nat_name2)));
                     }
-                    if (json.getString("PrefLanguageId").equals("0") ||  json.getString("PrefLanguageId").equals("null") ) {
+                    if (json.getString("PrefLanguageId").equals("0") || json.getString("PrefLanguageId").equals("null")) {
                         PrefLanguageEnName.setText(getString(R.string.not_set));
                     } else {
                         PrefLanguageEnName.setText(json.getString(getString(R.string.pref_lang)));
                     }
-                    if (json.getString("AgeRangeID").equals("0") || json.getString("AgeRangeID").equals("null") )  {
+                    if (json.getString("AgeRangeID").equals("0") || json.getString("AgeRangeID").equals("null")) {
                         AgeRange.setText(getString(R.string.not_set));
                     } else {
                         AgeRange.setText(json.getString("AgeRange"));
@@ -430,7 +446,10 @@ public class RideDetailsPassenger extends AppCompatActivity {
                         Smokers_str = getString(R.string.Accept_Smokers_txt);
                     } else if (Smokers_str.equals("false")) {
                         Smokers_str = getString(R.string.not_set);
+                    }else {
+                        Smokers_str = getString(R.string.not_set);
                     }
+
                     IsSmoking.setText(Smokers_str);
                     StartLat = json.getDouble("StartLat");
                     StartLng = json.getDouble("StartLng");
@@ -533,6 +552,7 @@ public class RideDetailsPassenger extends AppCompatActivity {
                                             Toast.makeText(RideDetailsPassenger.this, R.string.req_sent_succ, Toast.LENGTH_LONG).show();
                                             dialog.dismiss();
                                             Join_Ride_btn.setVisibility(View.INVISIBLE);
+                                            finish();
                                             break;
                                     }
                                 }
@@ -619,8 +639,6 @@ public class RideDetailsPassenger extends AppCompatActivity {
                 Socket sock = new Socket();
                 int timeoutMs = 2000;   // 2 seconds
                 sock.connect(sockaddr, timeoutMs);
-
-
                 json = new GetData().GetRouteById(Route_ID);
                 response2 = new GetData().GetPassengers_ByRouteID(Route_ID);
                 response1 = new GetData().Driver_GetReview(Driver_ID, Route_ID);
@@ -634,7 +652,10 @@ public class RideDetailsPassenger extends AppCompatActivity {
                         review.setAccountName(obj.getString("AccountName"));
                         review.setAccountNationalityEn(obj.getString(getString(R.string.acc_nat_name)));
                         review.setReview(obj.getString("Review"));
-                        if (!review.getReview().equals("")) {
+                        review.setReviewID(obj.getInt("ReviewId"));
+                        review.setRoute_ID(Route_ID);
+                        review.setDriverID(Driver_ID);
+                        if (!review.getReview().equals("") && !review.getReview().equals("null")) {
                             driverGetReviewDataModels_arr.add(review);
                             FLAG_REVIEW++;
 
@@ -645,7 +666,6 @@ public class RideDetailsPassenger extends AppCompatActivity {
 
 
                 }
-
 
                 assert response2 != null;
                 Log.d("Passengers resp", response2.toString());
@@ -659,12 +679,19 @@ public class RideDetailsPassenger extends AppCompatActivity {
 //                        item.setAccountPhoto(obj.getString("AccountPhoto"));
                         Log.d("Passenger id", String.valueOf(Passenger_ID));
                         Log.d("Pass list id", String.valueOf(obj.getInt("AccountId")));
-                        if (Passenger_ID == obj.getInt("AccountId")) {
+                        if (Passenger_ID == obj.getInt("AccountId") && obj.getString("RequestStatus").equals("true") )  {
                             FLAG_HIDE_JOIN = 2;
+                        }
+
+                        if (Passenger_ID == obj.getInt("AccountId")) {
+                            if (obj.getString("RequestStatus").equals("null") || obj.getString("RequestStatus").equals("false")){
+                                FLAG_HIDE_JOIN=5;
+                            }
                         }
 
                         item.setPassengerId(obj.getInt("ID"));
                         item.setAccountName(obj.getString("AccountName"));
+                        item.setRate(obj.getInt("PassenegerRateByDriver"));
 
                         if (obj.getString("AccountMobile").equals("null")) {
                             item.setAccountMobile("");
@@ -681,9 +708,6 @@ public class RideDetailsPassenger extends AppCompatActivity {
                         ex.printStackTrace();
                     }
                 }
-
-
-
 
 
                 exists = true;
@@ -744,13 +768,15 @@ public class RideDetailsPassenger extends AppCompatActivity {
 // Get back the mutable Polyline
             Polyline polyline = mMap.addPolyline(rectOptions);
 
+
             final Marker markerZero = mMap.addMarker(new MarkerOptions().
                     position(new LatLng(StartLat, StartLng))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.anchor)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pindriver)).snippet(FromRegionEnName_Str).title(FromEmirateEnName_Str));
 
-            final Marker markerZero2 = mMap.addMarker(new MarkerOptions().
+            mMap.addMarker(new MarkerOptions().
                     position(new LatLng(EndLat, EndLng))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.anchor)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pindriver)).snippet(ToRegionEnName_Str).title(ToEmirateEnName_Str));
+            markerZero.showInfoWindow();
 
 
         }
@@ -824,9 +850,6 @@ public class RideDetailsPassenger extends AppCompatActivity {
         finish();
 
     }
-
-
-
 
 
 }

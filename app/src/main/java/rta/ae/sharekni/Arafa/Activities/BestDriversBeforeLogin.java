@@ -74,7 +74,7 @@ public class BestDriversBeforeLogin extends AppCompatActivity {
             pDialog = new ProgressDialog(BestDriversBeforeLogin.this);
             pDialog.setMessage(getString(R.string.loading) + "...");
             pDialog.setIndeterminate(false);
-            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             pDialog.show();
         }
 
@@ -156,10 +156,27 @@ public class BestDriversBeforeLogin extends AppCompatActivity {
                         driver.setNationality(obj.getString(getString(R.string.nat_name2)));
                         driver.setRating(obj.getInt("Rating"));
                         driver.setPhoneNumber(obj.getString("AccountMobile"));
+
+                        int x1 = obj.getInt("GreenPoints");
+                        int x3 = obj.getInt("CO2Saved");
+                        x3 = x3/1000;
+
+                        driver.setGreenPoints(String.valueOf(x1));
+                        driver.setCO2Saved(String.valueOf(x3));
+
+
+
+                       // driver.setGreenPoints(obj.getString("GreenPoints"));
+                     //   driver.setCO2Saved(obj.getString("CO2Saved"));
+
+
                         if (!obj.getString("AccountPhoto").equals("NoImage.png")){
                             GetData gd = new GetData();
                             driver.setPhoto(gd.GetImage(obj.getString("AccountPhoto")));
                         }
+                        driver.setLastSeen(obj.getString("LastSeen"));
+
+
                         arr.add(driver);
                         publishProgress((int)(i*100/response.length()));
                     } catch (JSONException e) {

@@ -46,7 +46,7 @@
     <string name="title_activity_top_rides_after_login">TopRidesAfterLogin</string>
     <string name="title_activity_top_drivers_after_login">TopDriversAfterLogin</string>
     <string name="title_activity_most_rides_details">MostRidesDetails</string>
-    <string name="title_activity_forget_password">ForgetPassword</string>
+    <string name="title_activity_forget_password">ForgotPassword</string>
     <string name="title_activity_change_password_test">ChangePasswordTest</string>
     <string name="title_activity_my_profile_test">MyProfileTest</string>
     <string name="title_activity_edit_profile_test">EditProfileTest</string>
@@ -76,7 +76,8 @@
     <string name="navy_List_image_content_Desc">navy_image_icon</string>
 
     <string name="Reg_appBar_name">Registration</string>
-    <string name="fill_all_error">Fill Al Required fields</string>
+    <string name="fill_all_error">Fill All Required fields</string>
+    <string name="fill_Email">Fill Email please</string>
     <string name="Reg_FirstN">First Name</string>
     <string name="Reg_LastN">Last Name</string>
     <string name="REg_Mobile">Mobile Number</string>
@@ -114,7 +115,7 @@
     <string name="loading">Loading</string>
     <string name="login_email_hint">example@gmail.com</string>
     <string name="login_pass_hint">Password</string>
-    <string name="login_check_user_pass">Check ur Username and Password</string>
+    <string name="login_check_user_pass">Check your Username and Password</string>
     <string name="login_wrong_user_pass">Wrong Username Or Password</string>
     <string name="login_network_error">Network Error !</string>
     <string name="nat_name">NationlityEnName</string>
@@ -130,14 +131,14 @@
     <string name="short_pass">Password must be at least 5 Character</string>
     <string name="short_mobile">Enter Valid Mobile Number</string>
     <string name="select_image_first_error">Select Profile Image!!</string>
-    <string name="select_type_first_error">please Choose a user Type</string>
+    <string name="select_type_first_error">Please Choose Registration type</string>
     <string name="connection_problem">Connection Problem!</string>
     <string name="con_problem_message">Make sure you have internet connection</string>
     <string name="retry">Retry</string>
     <string name="exit">Exit!</string>
     <string name="goBack">Go Back</string>
     <string name="reg_now">Register Now |</string>
-    <string name="forget_pass">Forget Password?</string>
+    <string name="forget_pass">Forgot Password?</string>
     <string name="start_point">(Start Point)</string>
     <string name="not_set">Not Specified</string>
     <string name="end_point">(End Point)</string>
@@ -196,11 +197,13 @@
     <string name="pref_lang">PrefLanguageEnName</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
     <string name="write_remark">Write Your remarks</string>
     <string name="your_remarks">Your remarks</string>
     <string name="i_like_join_ride">I\'d like to join your Ride</string>
     <string name="already_sent_request">You already sent request</string>
     <string name="req_sent_succ">Request had been sent Successfully , Wait for driver Approval.</string>
+    <string name="req_sent_succ2">Request had been sent Successfully , Wait for Passenger Approval.</string>
     <string name="acc_nat_name">AccountNationalityEn</string>
     <string name="from_reg_en_name">FromRegionEnName</string>
     <string name="to_reg_en_name">ToRegionEnName</string>
@@ -233,6 +236,7 @@
     <string name="notification">Notifications</string>
     <string name="reject_request">Has Rejected Your Request</string>
     <string name="accept_request">Has Accepted Your Request</string>
+    <string name="pending_request">Received Your Request And Waiting For Approval</string>
     <string name="join_request">Send you a join Request</string>
     <string name="no_created_rides">There is no Rides Created yet</string>
     <string name="set_direction">Set Direction</string>
@@ -261,7 +265,7 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="write_your_review">Write Your Review</string>
     <string name="your_review">Your Review</string>
-    <string name="forget_password">Forget Password</string>
+    <string name="forget_password">Forgot Password</string>
     <string name="check_user_pass">Check your Username and Password</string>
     <string name="enter_your_no">Enter your number</string>
     <string name="enter_your_email">Enter your email</string>
@@ -313,6 +317,8 @@
     <string name="No_History">No History Found</string>
     <string name="No_Saved_Search">No Saved Search</string>
     <string name="driver_nat_en_name">DriverNationalityEnName</string>
+    <string name="passenger_nat_en_name">PassengerNationalityEnName</string>
+    <string name="nat_rn_name">NationalityEnName</string>
     <string name="Register_vehicle_update">Details Updated</string>
     <string name="Account_Approved_rides_Details">Details</string>
     <string name="Account_Approved_rides_Driver">Driver</string>
@@ -335,8 +341,8 @@
     <string name="passenger_deleted_successfully">Passenger deleted successfully</string>
     <string name="Delete_Ride">Delete Ride</string>
     <string name="choose_birth_date">Choose your Birth Date</string>
-    <string name="taken_username">Cannot Register , Please choose another username</string>
-    <string name="taken_mobile">Cannot Register , Check your Mobile Number</string>
+    <string name="taken_username">Email Already Exist, Please choose another</string>
+    <string name="taken_mobile">Mobile No. already exist, Please choose another</string>
     <string name="Write_review_first">Please write a review first</string>
     <string name="Delete_Review_Str">Delete Review</string>
     <string name="Leave_Ride_Str">Leave Ride</string>
@@ -350,9 +356,10 @@
     <string name="Ride_Edited">Ride Edited</string>
     <string name="Now_What_would_you_like_to_do">Start using the App</string>
     <string name="please_confirm_to_delete">Please confirm to delete</string>
+    <string name="please_confirm_to_cancel">Please confirm to delete request</string>
     <string name="Delete_msg">Delete</string>
     <string name="Confirm_str">Confirm</string>
-    <string name="Cancel_msg">Cancel</string>
+    <string name="Cancel_msg">DELETE</string>
     <string name="No_Phone_Number_msg">No Phone Number</string>
     <string name="Accept_Smokers_txt">Accept Smokers</string>
     <string name="change_vehicle">Change Vehicle</string>
@@ -360,6 +367,7 @@
     <string name="Rate_str">Rate</string>
     <string name="Verify_str">Verify</string>
     <string name="rate_submitted">Rate is successfully submitted</string>
+    <string name="request_removed">Request is successfully removed</string>
     <string name="rate_submit_failed">can\'t submit rate</string>
     <string name="Save_Changes_Edit_Carpool">Save Changes</string>
     <string name="VehicleName_Edit_CarPool">VehicleEnName</string>
@@ -371,10 +379,57 @@
     <string name="Enter_code_again">Resend Code again</string>
     <string name="Updating_vehicles_str">Updating Vehicles</string>
     <string name="plese_check_file_number_first">Please check file number first</string>
-    <string name="check_mobile_and_email">Please check Mobile Number and Email</string>
+    <string name="check_mobile_and_email">Please check Email</string>
     <string name="select_start_point">PLease Select Start Point at least</string>
     <string name="region_identical">From and To Regions Can\'t Be Identical!</string>
-    <string name="choose_oneday">Please Choose at least 1 Day</string>
+    <string name="choose_oneday">Please Choose at least one Day</string>
+    <string name="reg_gender_both">Both</string>
+    <string name="accept_smoking_Str">Accept Smoking</string>
+    <string name="accept_smokers_str">Accept</string>
+    <string name="not_accept_smokers_str">Not Accept</string>
+    <string name="is_smoking_Str">Smokers</string>
+    <string name="preferred_gender_Str">Preferred Gender</string>
+    <string name="Review_updated">Review Updated</string>
+    <string name="delete_request_Str">Delete Request</string>
+    <string name="noVehiclesFound">You don\'t have any vehicle registered</string>
+    <string name="RegisterVehicle_Btn">Register Vehicle</string>
+    <string name="Dismiss_txt">Dismiss</string>
+    <string name="last_seen_textview">Last Seen :</string>
+    <string name="drivers_Str">Drivers</string>
+    <string name="passengers_Str">Passengers</string>
+    <string name="InvitePassenger">I\'d like to invite you to my ride</string>
+    <string name="select_ride">Select Ride</string>
+    <string name="send_invitation_str">send invitation</string>
+    <string name="choose_ride_to_send_invitation">Choose Ride to send Invitation</string>
+    <string name="ride_name_str">Ride Name :</string>
+    <string name="saveSearch_Error">To save the search you must choose start point and also a distention</string>
+    <string name="invite_">Invite</string>
+    <string name="matched_search_results">Matched Search Results</string>
+    <string name="Sent_Invite">Has Sent you an Invitation</string>
+    <string name="_18_years">+18 years</string>
+    <string name="Driver_pending_request">Received Your invitation And Waiting For Approval</string>
+    <string name="Max_Routes_Reached">Maximum Rides Reached</string>
+    <string name="Location_Not_Enabled">Location is not Enabled</string>
+    <string name="Please_turn_on_gps_first">Please Turn on Gps First</string>
+    <string name="Turn_On">Turn On</string>
+    <string name="No_Map">No</string>
+    <string name="Please_enter_emiate_and_region">Please enter Emirate and Region</string>
+    <string name="No_passengers_Found">No Passengers Found</string>
+    <string name="No_Location_Detected">No Location Detected</string>
+    <string name="Password_sould_be_more_than_five_chars">Password Should be More than 5 characters</string>
+    <string name="choose_Pick_Up_And_Drop_Off">Please Choose Pick Up and Drop off</string>
+    <string name="Delete_Request">Delete Request</string>
+    <string name="no_available_seats">Not available seats</string>
+    <string name="Send_Invite_Str">Send</string>
+    <string name="invite_yes">Yes</string>
+    <string name="No_Phone_number">No Phone Number</string>
+    <string name="points_str">Points</string>
+    <string name="km_str">Km</string>
+    <string name="routes_str">Routes</string>
+    <string name="vehicles_str">Vehicles</string>
+    <string name="kg_str">Kg</string>
+    <string name="co2_saving">CO2 Saving</string>
+    <string name="ok_2">Ok</string>
 
 
 </resources>

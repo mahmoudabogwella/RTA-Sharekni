@@ -1,9 +1,13 @@
 package rta.ae.sharekni.Arafa.DataModelAdapter;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,25 +19,24 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.pkmmte.view.CircularImageView;
 
-import rta.ae.sharekni.Arafa.Classes.AppController;
-import rta.ae.sharekni.Arafa.Classes.CircularNetworkImageView;
-import rta.ae.sharekni.Arafa.Classes.GetData;
-import rta.ae.sharekni.Arafa.Classes.ImageDecoder;
-import rta.ae.sharekni.Arafa.DataModel.BestDriverDataModel;
-
-import rta.ae.sharekni.R;
-
-
 import java.util.List;
+import java.util.Locale;
+
+import rta.ae.sharekni.Arafa.Classes.AppController;
+import rta.ae.sharekni.Arafa.Classes.GetData;
+import rta.ae.sharekni.Arafa.DataModel.BestDriverDataModel;
+import rta.ae.sharekni.R;
 
 public class BestDriverDataModelAdapter extends BaseAdapter {
 
 
     private Activity activity;
+    public static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 2;
     private LayoutInflater inflater;
     private List<BestDriverDataModel> driverItems;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     String URL = GetData.PhotoURL;
+    String Locale_Str;
 
     public BestDriverDataModelAdapter(Activity activity, List<BestDriverDataModel> driverItems) {
         this.activity = activity;
@@ -73,6 +76,12 @@ public class BestDriverDataModelAdapter extends BaseAdapter {
         TextView Name = (TextView) convertView.findViewById(R.id.tvName);
         TextView Nat = (TextView) convertView.findViewById(R.id.tvNat);
         TextView Rat = (TextView) convertView.findViewById(R.id.Best_Drivers_Item_rate);
+        TextView   LastSeenText= (TextView) convertView.findViewById(R.id.LastSeenText);
+        TextView LastSeenTvValue = (TextView) convertView.findViewById(R.id.LastSeenTvValue);
+        TextView Green_Points_txt = (TextView) convertView.findViewById(R.id.Green_Points_txt);
+        TextView Green_co2_saving_txt = (TextView) convertView.findViewById(R.id.Green_co2_saving_txt);
+        ImageView GreenPointCar_im = (ImageView) convertView.findViewById(R.id.GreenPointCar_im);
+
 
         //RatingBar rating = (RatingBar) convertView.findViewById(R.id.ratingBar);
 
@@ -88,6 +97,25 @@ public class BestDriverDataModelAdapter extends BaseAdapter {
             Photo.setImageResource(R.drawable.defaultdriver);
         }
 
+
+        Locale locale = Locale.getDefault();
+        Locale_Str = locale.toString();
+
+        Log.d("test locale", Locale_Str);
+
+
+        if (Locale_Str.contains("en")) {
+
+
+            GreenPointCar_im.setImageResource(R.drawable.greenpointcar);
+
+        } else {
+
+            GreenPointCar_im.setImageResource(R.drawable.greencarar);
+
+        }
+
+
         StringBuffer res = new StringBuffer();
 
         String[] strArr = m.getName().split(" ");
@@ -99,13 +127,34 @@ public class BestDriverDataModelAdapter extends BaseAdapter {
                 str = new String(stringArray);
 
                 res.append(str).append(" ");
+                notifyDataSetChanged();
             }
+
 
         }
         Name.setText(res);
 
         Nat.setText(m.getNationality());
         Rat.setText(Integer.toString(m.getRating()));
+
+        Green_Points_txt.setText(m.getGreenPoints());
+        Green_co2_saving_txt.setText(m.getCO2Saved());
+
+
+
+
+        LastSeenText.setVisibility(View.INVISIBLE);
+        LastSeenTvValue.setVisibility(View.INVISIBLE);
+
+        if(m.getLastSeen().equals("null")){
+            LastSeenText.setVisibility(View.INVISIBLE);
+            LastSeenTvValue.setVisibility(View.INVISIBLE);
+        }else {
+            LastSeenText.setVisibility(View.VISIBLE);
+            LastSeenTvValue.setVisibility(View.VISIBLE);
+            LastSeenTvValue.setText(m.getLastSeen());
+
+        }
 
 //        Best_Drivers_Item_Details.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -122,10 +171,26 @@ public class BestDriverDataModelAdapter extends BaseAdapter {
             public void onClick(View v) {
                 if (m.getPhoneNumber() == null || m.getPhoneNumber().equals("")) {
 
-                    Toast.makeText(activity, "No Phone Number" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, R.string.No_Phone_number , Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + m.getPhoneNumber()));
-                    activity.startActivity(intent);
+
+                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Request missing location permission.
+                        ActivityCompat.requestPermissions(activity,
+                                new String[]{Manifest.permission.CALL_PHONE},
+                                MY_PERMISSIONS_REQUEST_CALL_PHONE
+                        );
+
+                    } else {
+
+
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + m.getPhoneNumber()));
+                        activity.startActivity(intent);
+
+                    }
+
+
                 }
             }
         });
@@ -134,7 +199,7 @@ public class BestDriverDataModelAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if (m.getPhoneNumber()==null || m.getPhoneNumber().equals("")){
-                    Toast.makeText(activity, "No Phone Number" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity,R.string.No_Phone_number, Toast.LENGTH_SHORT).show();
                 }else {
 
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + m.getPhoneNumber()));
@@ -147,6 +212,47 @@ public class BestDriverDataModelAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED  ) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 
 
 }

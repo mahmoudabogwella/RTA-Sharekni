@@ -45,11 +45,11 @@ public class PickUpActivity extends AppCompatActivity {
 
     int From_Em_Id = -1;
     int From_Reg_Id = -1;
-    int To_Em_Id;
-    int To_Reg_Id;
+    int To_Em_Id = -1;
+    int To_Reg_Id = -1;
     int FLAG_ID;
 
-    Double Start_Latitude,Start_Longitude,End_Latitude,End_Longitude;
+    Double Start_Latitude, Start_Longitude, End_Latitude, End_Longitude;
 
     TextView Emirates_txt, Emirates_txt_2;
 
@@ -72,8 +72,8 @@ public class PickUpActivity extends AppCompatActivity {
     Context mContext;
     Dialog Emirates_Dialog;
     ListView Emirates_lv;
-    ImageView selectarrow_im,selectarrow_im_2;
-    RelativeLayout Emirates_Reltive_1,Emirates_Reltive_2;
+    ImageView selectarrow_im, selectarrow_im_2;
+    RelativeLayout Emirates_Reltive_1, Emirates_Reltive_2;
 
     static PickUpActivity pickUpActivity;
     backTread back1;
@@ -87,7 +87,6 @@ public class PickUpActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +95,7 @@ public class PickUpActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         FLAG_ID = intent.getIntExtra("FALG_SEARCH", 0);
+        final Bundle b = intent.getBundleExtra("options");
         Log.d("Flag id", String.valueOf(FLAG_ID));
 
         back1 = new backTread();
@@ -103,10 +103,10 @@ public class PickUpActivity extends AppCompatActivity {
 
         initToolbar();
         mContext = this;
-        selectarrow_im= (ImageView) findViewById(R.id.selectarrow_im);
-        selectarrow_im_2= (ImageView) findViewById(R.id.selectarrow_im_2);
-        Emirates_Reltive_1= (RelativeLayout) findViewById(R.id.Emirates_Reltive_1);
-        Emirates_Reltive_2= (RelativeLayout) findViewById(R.id.Emirates_Reltive_2);
+        selectarrow_im = (ImageView) findViewById(R.id.selectarrow_im);
+        selectarrow_im_2 = (ImageView) findViewById(R.id.selectarrow_im_2);
+        Emirates_Reltive_1 = (RelativeLayout) findViewById(R.id.Emirates_Reltive_1);
+        Emirates_Reltive_2 = (RelativeLayout) findViewById(R.id.Emirates_Reltive_2);
 
         dis_submit = (Button) findViewById(R.id.dis_submit);
         Emirates_txt = (TextView) findViewById(R.id.Emirates_spinner);
@@ -120,62 +120,118 @@ public class PickUpActivity extends AppCompatActivity {
         dis_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (FLAG_ID == 1) {
-
                     Intent in = new Intent(PickUpActivity.this, QSearch.class);
                     if (From_Em_Id != -1 && From_Reg_Id != -1) {
-                        in.putExtra("From_Em_Id", From_Em_Id);
-                        in.putExtra("From_EmirateEnName", From_EmirateEnName);
-                        in.putExtra("From_RegionEnName", From_RegionEnName);
-                        in.putExtra("From_Reg_Id", From_Reg_Id);
-                        in.putExtra("To_Em_Id", To_Em_Id);
-                        in.putExtra("To_EmirateEnName", To_EmirateEnName);
-                        in.putExtra("To_RegionEnName", To_RegionEnName);
-                        in.putExtra("To_Reg_Id", To_Reg_Id);
 
-                        Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
-                        Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
-                        Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
-                        Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
-                        startActivity(in);
-                        back1.cancel(true);
-                        back2.cancel(true);
-                        finish();
-                    }else {
-                        Toast.makeText(PickUpActivity.this, "Please enter Emitrate and Region", Toast.LENGTH_SHORT).show();
+                        if (To_Em_Id == -1 && To_Reg_Id == -1) {
+
+                            To_Em_Id = 0;
+                            To_Reg_Id = 0;
+                            Log.d("TO id's","Zero");
+
+                            in.putExtra("From_Em_Id", From_Em_Id);
+                            in.putExtra("From_EmirateEnName", From_EmirateEnName);
+                            in.putExtra("From_RegionEnName", From_RegionEnName);
+                            in.putExtra("From_Reg_Id", From_Reg_Id);
+                            in.putExtra("To_Em_Id", To_Em_Id);
+                            in.putExtra("To_EmirateEnName", To_EmirateEnName);
+                            in.putExtra("To_RegionEnName", To_RegionEnName);
+                            in.putExtra("To_Reg_Id", To_Reg_Id);
+                            in.putExtra("options", b);
+                            Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
+                            Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
+                            Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
+                            Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
+                            startActivity(in);
+                            back1.cancel(true);
+                            back2.cancel(true);
+                            finish();
+
+
+                        } else {
+                            in.putExtra("From_Em_Id", From_Em_Id);
+                            in.putExtra("From_EmirateEnName", From_EmirateEnName);
+                            in.putExtra("From_RegionEnName", From_RegionEnName);
+                            in.putExtra("From_Reg_Id", From_Reg_Id);
+                            in.putExtra("To_Em_Id", To_Em_Id);
+                            in.putExtra("To_EmirateEnName", To_EmirateEnName);
+                            in.putExtra("To_RegionEnName", To_RegionEnName);
+                            in.putExtra("To_Reg_Id", To_Reg_Id);
+                            in.putExtra("options", b);
+                            Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
+                            Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
+                            Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
+                            Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
+                            startActivity(in);
+                            back1.cancel(true);
+                            back2.cancel(true);
+                            finish();
+                            Log.d("TO id's","Values");
+
+                        }
+
+                    } else {
+                        Toast.makeText(PickUpActivity.this, R.string.Please_enter_emiate_and_region, Toast.LENGTH_SHORT).show();
                     }
                 }  // flag id
                 else if (FLAG_ID == 2) {
 
                     Intent in = new Intent(PickUpActivity.this, Advanced_Search.class);
                     if (From_Em_Id != -1 && From_Reg_Id != -1) {
-                        in.putExtra("From_Em_Id", From_Em_Id);
-                        in.putExtra("From_EmirateEnName", From_EmirateEnName);
-                        in.putExtra("From_RegionEnName", From_RegionEnName);
-                        in.putExtra("From_Reg_Id", From_Reg_Id);
-                        in.putExtra("To_Em_Id", To_Em_Id);
-                        in.putExtra("To_EmirateEnName", To_EmirateEnName);
-                        in.putExtra("To_RegionEnName", To_RegionEnName);
-                        in.putExtra("To_Reg_Id", To_Reg_Id);
 
-                        Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
-                        Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
-                        Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
-                        Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
-                        startActivity(in);
-                        back1.cancel(true);
-                        back2.cancel(true);
-                        finish();
-                    }else {
-                        Toast.makeText(PickUpActivity.this, "Please enter Emirate and Region", Toast.LENGTH_SHORT).show();
+                        if (To_Em_Id == -1 && To_Reg_Id == -1) {
+
+                            To_Em_Id = 0;
+                            To_Reg_Id = 0;
+
+                            in.putExtra("From_Em_Id", From_Em_Id);
+                            in.putExtra("From_EmirateEnName", From_EmirateEnName);
+                            in.putExtra("From_RegionEnName", From_RegionEnName);
+                            in.putExtra("From_Reg_Id", From_Reg_Id);
+                            in.putExtra("To_Em_Id", To_Em_Id);
+                            in.putExtra("To_EmirateEnName", To_EmirateEnName);
+                            in.putExtra("To_RegionEnName", To_RegionEnName);
+                            in.putExtra("To_Reg_Id", To_Reg_Id);
+                            in.putExtra("options", b);
+                            Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
+                            Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
+                            Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
+                            Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
+                            startActivity(in);
+                            back1.cancel(true);
+                            back2.cancel(true);
+                            finish();
+
+                        } else {
+                            in.putExtra("From_Em_Id", From_Em_Id);
+                            in.putExtra("From_EmirateEnName", From_EmirateEnName);
+                            in.putExtra("From_RegionEnName", From_RegionEnName);
+                            in.putExtra("From_Reg_Id", From_Reg_Id);
+                            in.putExtra("To_Em_Id", To_Em_Id);
+                            in.putExtra("To_EmirateEnName", To_EmirateEnName);
+                            in.putExtra("To_RegionEnName", To_RegionEnName);
+                            in.putExtra("To_Reg_Id", To_Reg_Id);
+                            in.putExtra("options", b);
+                            Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
+                            Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
+                            Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
+                            Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
+                            startActivity(in);
+                            back1.cancel(true);
+                            back2.cancel(true);
+                            finish();
+                        }
+
+
+                    } else {
+                        Toast.makeText(PickUpActivity.this, R.string.Please_enter_emiate_and_region, Toast.LENGTH_SHORT).show();
                     }
                 } //  else if 2
 
                 else if (FLAG_ID == 3) {
-
                     Intent in = new Intent(PickUpActivity.this, DriverCreateCarPool.class);
-                    if (From_Em_Id != -1 && From_Reg_Id != -1) {
+                    if (From_Em_Id != -1 && From_Reg_Id != -1 && To_Em_Id != -1 && To_Reg_Id != -1) {
                         in.putExtra("From_Em_Id", From_Em_Id);
                         in.putExtra("From_EmirateEnName", From_EmirateEnName);
                         in.putExtra("From_RegionEnName", From_RegionEnName);
@@ -184,11 +240,10 @@ public class PickUpActivity extends AppCompatActivity {
                         in.putExtra("To_EmirateEnName", To_EmirateEnName);
                         in.putExtra("To_RegionEnName", To_RegionEnName);
                         in.putExtra("To_Reg_Id", To_Reg_Id);
-                        in.putExtra("Start_Latitude",Start_Latitude);
-                        in.putExtra("Start_Longitude",Start_Longitude);
-                        in.putExtra("End_Latitude",End_Latitude);
-                        in.putExtra("End_Longitude",End_Longitude);
-
+                        in.putExtra("Start_Latitude", Start_Latitude);
+                        in.putExtra("Start_Longitude", Start_Longitude);
+                        in.putExtra("End_Latitude", End_Latitude);
+                        in.putExtra("End_Longitude", End_Longitude);
                         Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
                         Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
                         Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
@@ -200,8 +255,8 @@ public class PickUpActivity extends AppCompatActivity {
                         finish();
 
 
-                    }else {
-                        Toast.makeText(PickUpActivity.this, "Please enter Emitrate and Region", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(PickUpActivity.this, R.string.choose_Pick_Up_And_Drop_Off, Toast.LENGTH_SHORT).show();
                     }
                 } //  else if 2
 
@@ -336,7 +391,7 @@ public class PickUpActivity extends AppCompatActivity {
 
                 if (hasFocus) {
                     arr_2.clear();
-                    if (!back2.getStatus().equals(AsyncTask.Status.RUNNING)){
+                    if (!back2.getStatus().equals(AsyncTask.Status.RUNNING)) {
                         back2 = new backTread2();
                         back2.execute();
                     }
@@ -346,18 +401,16 @@ public class PickUpActivity extends AppCompatActivity {
         });
 
 
-
         Create_CarPool_txt_regions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 arr.clear();
-                if (!back1.getStatus().equals(AsyncTask.Status.RUNNING)){
+                if (!back1.getStatus().equals(AsyncTask.Status.RUNNING)) {
                     back1 = new backTread();
                     back1.execute();
                 }
             }
         });
-
 
 
 //        Create_CarPool_txt_regions.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -368,9 +421,6 @@ public class PickUpActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
-
-
-
 
 
     } // oncreate
@@ -416,14 +466,10 @@ public class PickUpActivity extends AppCompatActivity {
             sweep_icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     Create_CarPool_txt_regions.setText("");
                     Create_CarPool_txt_regions.setHint(getString(R.string.enter_region));
-
                 }
             });
-
-
         }
 
         @Override
@@ -451,8 +497,19 @@ public class PickUpActivity extends AppCompatActivity {
                         final RegionsDataModel regions = new RegionsDataModel(Parcel.obtain());
                         regions.setID(jsonObject.getInt("ID"));
                         regions.setRegionEnName(jsonObject.getString(getString(R.string.reg_name)));
-                        regions.setRegionLatitude(jsonObject.getDouble("RegionLatitude"));
-                        regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
+                        if (!jsonObject.getString("RegionLatitude").equals("null") && !jsonObject.getString("RegionLatitude").equals("")) {
+                            regions.setRegionLatitude(jsonObject.getDouble("RegionLatitude"));
+
+                            // Testing
+                           regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
+
+                            // Production
+                          //    regions.setRegionLongitude(Double.valueOf(jsonObject.getString("RegionLongitude").split(",")[0]));
+                        } else {
+                            regions.setRegionLatitude(0.0);
+                            regions.setRegionLongitude(0.0);
+
+                        }
                         arr.add(regions);
                     }
                 }
@@ -491,9 +548,8 @@ public class PickUpActivity extends AppCompatActivity {
                     Create_CarPool_txt_regions_2.setText(arr_2.get(position).getRegionEnName());
                     To_Reg_Id = arr_2.get(position).getID();
                     To_RegionEnName = arr_2.get(position).getRegionEnName();
-                    End_Latitude=arr_2.get(position).getRegionLatitude();
-                    End_Longitude=arr_2.get(position).getRegionLongitude();
-
+                    End_Latitude = arr_2.get(position).getRegionLatitude();
+                    End_Longitude = arr_2.get(position).getRegionLongitude();
 
                     Log.d("Start lat", String.valueOf(End_Latitude));
                     Log.d("Start lat", String.valueOf(End_Longitude));
@@ -535,18 +591,27 @@ public class PickUpActivity extends AppCompatActivity {
                     inputStream.close();
                     ret = stringBuilder.toString();
                     Regions = new JSONArray(ret);
-
                     JSONArray jsonArray = Regions;
-
-
                     for (int i = 0; i < jsonArray.length(); i++) {
-
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         final RegionsDataModel regions = new RegionsDataModel(Parcel.obtain());
                         regions.setID(jsonObject.getInt("ID"));
                         regions.setRegionEnName(jsonObject.getString(getString(R.string.reg_name)));
-                        regions.setRegionLatitude(jsonObject.getDouble("RegionLatitude"));
-                        regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
+
+                        if (jsonObject.getString("RegionLatitude").equals("null")) {
+                            regions.setRegionLatitude(0.0);
+                        } else {
+                            regions.setRegionLatitude(jsonObject.getDouble("RegionLatitude"));
+                        }
+
+                        if (jsonObject.getString("RegionLongitude").equals("null")) {
+                            regions.setRegionLongitude(0.0);
+                        } else {
+                            //Testing Line
+                            regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
+                            //Production Line
+                          //  regions.setRegionLongitude(Double.valueOf(jsonObject.getString("RegionLongitude").split(",")[0]));
+                        }
                         arr_2.add(regions);
                     }
                 }
@@ -559,8 +624,6 @@ public class PickUpActivity extends AppCompatActivity {
             }
             return null;
         }
-
-
     }    // back thread classs
 
 
@@ -582,17 +645,18 @@ public class PickUpActivity extends AppCompatActivity {
             onBackPressed();
             return true;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        back1.cancel(true);
-        back2.cancel(true);
+        if (back1 != null) {
+            back1.cancel(true);
+        }
+        if (back2 != null) {
+            back2.cancel(true);
+        }
         finish();
     }
 
@@ -608,8 +672,6 @@ public class PickUpActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-
 
 
 }  //  Class
