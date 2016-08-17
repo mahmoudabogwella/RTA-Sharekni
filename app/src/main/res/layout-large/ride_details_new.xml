@@ -1,32 +1,25 @@
-
-<LinearLayout
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    >
+    android:background="#FFFFFF"
+    android:fadeScrollbars="false">
 
-    <include
-        android:id="@+id/app_bar"
-        layout="@layout/app_bar" />
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map_ride_details"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        tools:context="rta.ae.sharekni.MapsActivity" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/app_bar_3" />
 
-
-
-
-
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFFFFF">
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map_ride_details"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            tools:context="rta.ae.sharekni.MapsActivity" />
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -42,14 +35,14 @@
                 android:orientation="vertical">
 
 
-
                 <RelativeLayout
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
                     android:background="#576274"
                     android:paddingBottom="10dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
                     android:paddingRight="10dp"
                     android:paddingStart="10dp">
 
@@ -63,7 +56,7 @@
                         android:gravity="center"
                         android:text="@string/from_text_top_ride"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
 
                         />
@@ -94,7 +87,7 @@
                         android:maxLines="1"
                         android:text="FromEmirateEnName"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
+                        android:textSize="20sp" />
 
 
                     <TextView
@@ -111,7 +104,7 @@
                         android:singleLine="true"
                         android:text="FromRegionEnName"
                         android:textColor="#FFFFFF"
-                        android:textSize="20sp" />
+                        android:textSize="21sp" />
 
                     <TextView
                         android:id="@+id/To_txt_id_ride_details"
@@ -121,7 +114,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/to_text_top_ride"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
 
                         />
@@ -136,7 +129,7 @@
                         android:layout_toRightOf="@+id/ToEmirateEnName"
                         android:text=":"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/ToEmirateEnName"
@@ -152,7 +145,7 @@
                         android:maxLines="1"
                         android:text="ToEmirateEnName"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
 
                         />
 
@@ -171,7 +164,7 @@
                         android:singleLine="true"
                         android:text="ToRegionEnName"
                         android:textColor="#FFFFFF"
-                        android:textSize="20sp" />
+                        android:textSize="21sp" />
 
 
                     <!--<TextView-->
@@ -199,7 +192,7 @@
                         android:maxLines="1"
                         android:text="@string/not_set"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
+                        android:textSize="20sp" />
 
 
                     <TextView
@@ -215,7 +208,7 @@
                         android:maxLines="1"
                         android:text="@string/time"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
 
@@ -241,7 +234,7 @@
                         android:layout_marginBottom="30dp"
                         android:text="@string/ride_days"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -255,15 +248,15 @@
                         android:layout_toRightOf="@+id/ride_details_Ride_Days_txt"
                         android:text="@string/not_set"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
 
                         />
 
 
                     <Button
                         android:id="@+id/Route_Delete_Btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_below="@+id/ride_details_Ride_Days_txt"
@@ -271,14 +264,14 @@
                         android:background="@drawable/driver_details_btn"
                         android:text="@string/delete"
                         android:textAllCaps="false"
-
+                        android:textSize="20sp"
                         />
 
                     <Button
 
                         android:id="@+id/Route_Edit_Btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_below="@+id/ride_details_Ride_Days_txt"
                         android:layout_marginBottom="10dp"
                         android:layout_marginEnd="20dp"
@@ -287,13 +280,14 @@
                         android:layout_toStartOf="@+id/Route_Delete_Btn"
                         android:background="@drawable/driver_details_btn"
                         android:text="@string/edit"
+                        android:textSize="20sp"
                         android:textAllCaps="false" />
 
 
                     <Button
                         android:id="@+id/Route_permit_Btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_below="@+id/ride_details_Ride_Days_txt"
                         android:layout_marginBottom="10dp"
                         android:layout_marginEnd="20dp"
@@ -302,6 +296,7 @@
                         android:layout_toStartOf="@+id/Route_Edit_Btn"
                         android:background="@drawable/driver_details_btn"
                         android:text="@string/permit"
+                        android:textSize="20sp"
                         android:textAllCaps="false"
                         android:visibility="invisible" />
 
@@ -312,23 +307,20 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#FFFFFF"
-                    >
+                    android:background="#FFFFFF">
 
 
                     <RelativeLayout
+                        android:id="@+id/Prefernces_Relative_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/Prefernces_Relative_id"
-                        android:background="@drawable/borders"
                         android:layout_marginEnd="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
-                        android:padding="15dp"
-                        >
-
+                        android:background="@drawable/borders"
+                        android:padding="15dp">
 
 
                         <TextView
@@ -339,21 +331,21 @@
                             android:layout_marginRight="30dp"
                             android:layout_marginTop="20dp"
                             android:text="@string/language"
-                            android:textSize="16sp" />
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/PrefLanguageEnName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignBottom="@+id/ride_details_lang_txt"
-                            android:layout_marginEnd="25dp"
-                            android:layout_marginRight="25dp"
                             android:layout_alignLeft="@+id/AgeRange"
                             android:layout_alignStart="@+id/AgeRange"
+                            android:layout_marginEnd="25dp"
+                            android:layout_marginRight="25dp"
                             android:layout_toEndOf="@+id/ride_details_lang_txt"
                             android:layout_toRightOf="@+id/ride_details_lang_txt"
                             android:text="Language"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold"
 
                             />
@@ -366,7 +358,7 @@
                             android:layout_marginEnd="40dp"
                             android:layout_marginRight="40dp"
                             android:text="@string/age_range"
-                            android:textSize="16sp" />
+                            android:textSize="18sp" />
 
 
                         <TextView
@@ -374,14 +366,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignBottom="@+id/ride_details_age_range_txt"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
                             android:layout_toEndOf="@+id/ride_details_age_range_txt"
                             android:layout_toRightOf="@+id/ride_details_age_range_txt"
                             android:lines="1"
                             android:maxLines="1"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginEnd="10dp"
                             android:text="AgeRange"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
 
@@ -392,11 +384,11 @@
                             android:layout_alignLeft="@+id/ride_details_lang_txt"
                             android:layout_alignStart="@+id/ride_details_lang_txt"
                             android:layout_below="@+id/ride_details_lang_txt"
-                            android:layout_marginTop="15dp"
                             android:layout_marginEnd="30dp"
                             android:layout_marginRight="30dp"
+                            android:layout_marginTop="15dp"
                             android:text="@string/gender"
-                            android:textSize="16sp" />
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/PreferredGender"
@@ -408,7 +400,7 @@
                             android:layout_toEndOf="@+id/ride_details_Gender_txt"
                             android:layout_toRightOf="@+id/ride_details_Gender_txt"
                             android:text="Gender"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -416,12 +408,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/ride_details_age_range_txt"
-                            android:text="@string/smokers"
-                            android:textSize="16sp"
-                            android:layout_marginTop="15dp"
                             android:layout_marginEnd="30dp"
                             android:layout_marginRight="30dp"
-                            />
+                            android:layout_marginTop="15dp"
+                            android:text="@string/smokers"
+                            android:textSize="18sp" />
 
 
                         <TextView
@@ -435,7 +426,7 @@
                             android:lines="1"
                             android:maxLines="1"
                             android:text="IsSmoking"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
 
@@ -447,11 +438,11 @@
                             android:layout_alignStart="@+id/ride_details_Gender_txt"
                             android:layout_below="@+id/ride_details_Gender_txt"
                             android:layout_marginBottom="20dp"
-                            android:layout_marginTop="15dp"
                             android:layout_marginEnd="30dp"
                             android:layout_marginRight="30dp"
+                            android:layout_marginTop="15dp"
                             android:text="@string/nationality"
-                            android:textSize="16sp" />
+                            android:textSize="18sp" />
 
 
                         <TextView
@@ -462,7 +453,7 @@
                             android:layout_alignLeft="@+id/AgeRange"
                             android:layout_alignStart="@+id/AgeRange"
                             android:text="NationalityEnName"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
 
@@ -482,22 +473,37 @@
                         android:paddingStart="20dp"
                         android:text="@string/pref"
                         android:textColor="@color/primaryColor"
-                        android:textSize="17sp" />
+                        android:textSize="20sp" />
 
 
+                    <Button
+                        android:id="@+id/Route_Driver_Send_invite"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_below="@id/Prefernces_Relative_id"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/user_register_border_button"
+                        android:text="@string/matched_search_results"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp" />
 
 
                     <RelativeLayout
                         android:id="@+id/REaltive_Passengers_1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/Prefernces_Relative_id"
-                        android:layout_marginTop="30dp"
+                        android:layout_below="@+id/Route_Driver_Send_invite"
                         android:layout_marginEnd="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginStart="10dp"
-                        >
+                        android:layout_marginTop="10dp"
+                        android:visibility="invisible">
 
                         <TextView
                             android:id="@+id/ride_details_pref_txt"
@@ -507,7 +513,7 @@
                             android:layout_marginTop="20dp"
                             android:text="@string/passenger_name"
                             android:textColor="@color/primaryColor"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold"
 
 
@@ -525,8 +531,9 @@
                             android:layout_toRightOf="@+id/ride_details_pref_txt"
                             android:text="@string/nationality"
                             android:textColor="@color/primaryColor"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:visibility="invisible" />
 
 
                         <View
@@ -546,13 +553,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/REaltive_Passengers_1"
-                        android:orientation="vertical"
                         android:layout_marginEnd="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginStart="10dp"
-
-                        >
+                        android:orientation="vertical"
+                        android:visibility="invisible">
 
                         <ListView
                             android:id="@+id/ride_details_passengers"
@@ -607,16 +613,17 @@
                         android:paddingStart="20dp"
                         android:text="@string/reviews"
                         android:textColor="@color/primaryColor"
-                        android:textSize="17sp" />
+                        android:textSize="20sp" />
 
 
                 </RelativeLayout>
-
 
 
             </LinearLayout>
 
 
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

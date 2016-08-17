@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import rta.ae.sharekni.Arafa.Classes.AppController;
 import rta.ae.sharekni.Arafa.Classes.GetData;
@@ -31,7 +33,7 @@ public class PendingRequestDetails extends AppCompatActivity {
 
     List<DriverAlertsForRequestDataModel> arr = new ArrayList<>();
     private Toolbar toolbar;
-    String PassengerName,Driver_Pending;
+    String PassengerName, Driver_Pending;
     String RouteName, NationalityEnName, PassengerMobile, Remarks, RequestDate;
     Bitmap AccountPhoto;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
@@ -56,11 +58,11 @@ public class PendingRequestDetails extends AppCompatActivity {
         Remarks = intent.getStringExtra("Remarks");
         RequestDate = intent.getStringExtra("RequestDate");
         RequestId = intent.getIntExtra("RequestId", 0);
-        Driver_Pending= intent.getStringExtra("Driver_Pending_Request");
+        Driver_Pending = intent.getStringExtra("Driver_Pending_Request");
 
         Log.d("RouteName", RouteName);
         Log.d("PassengerName", PassengerName);
-        Log.d("Driver Pending Request",Driver_Pending);
+        Log.d("Driver Pending Request", Driver_Pending);
 
 
         RouteName_txt = (TextView) findViewById(R.id.RouteName);
@@ -94,7 +96,7 @@ public class PendingRequestDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (Driver_Pending.equals("Driver_Pending_Request")){
+                if (Driver_Pending.equals("Driver_Pending_Request")) {
 
 
                     final String[] res = new String[1];
@@ -127,7 +129,7 @@ public class PendingRequestDetails extends AppCompatActivity {
                             }).setIcon(android.R.drawable.ic_dialog_alert).show();
 
 
-                }else {
+                } else {
                     final String[] res = new String[1];
                     new AlertDialog.Builder(PendingRequestDetails.this)
                             .setTitle(R.string.Delete_Request)
@@ -135,7 +137,7 @@ public class PendingRequestDetails extends AppCompatActivity {
                             .setPositiveButton(R.string.invite_yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     try {
-                                            res[0] = new GetData().Passenger_RemoveRequest(RequestId);
+                                        res[0] = new GetData().Passenger_RemoveRequest(RequestId);
                                         if (res[0].equals("\"1\"")) {
                                             Toast.makeText(getBaseContext(), getString(R.string.request_removed), Toast.LENGTH_SHORT).show();
 //                                                finish();
@@ -164,7 +166,6 @@ public class PendingRequestDetails extends AppCompatActivity {
         });
 
 
-
     }
 
 
@@ -183,8 +184,17 @@ public class PendingRequestDetails extends AppCompatActivity {
 //        mytext.setText("Most Rides");
 
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            Locale locale = Locale.getDefault();
+            String Locale_Str2 = locale.toString();
+            if (Locale_Str2.contains("en")) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_back);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_forward);
+            }
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 }

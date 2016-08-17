@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,7 +27,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import rta.ae.sharekni.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,10 +35,12 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 import rta.ae.sharekni.Arafa.Classes.GetData;
 import rta.ae.sharekni.Arafa.Classes.VolleySingleton;
 import rta.ae.sharekni.Arafa.DataModel.BestDriverDataModel;
+import rta.ae.sharekni.TakeATour.TakeATour;
 
 public class LoginApproved extends AppCompatActivity {
     //http://sharekni.sdgstaff.com/
@@ -47,7 +49,7 @@ public class LoginApproved extends AppCompatActivity {
     Button loginBtn;
     String user, pass;
     TextView txt_forgetpass, txt_noaccountsignup;
-    String url = GetData.DOMAIN +"CheckLogin?";
+    String url = GetData.DOMAIN + "CheckLogin?";
     static LoginApproved loginActivity;
     private Toolbar toolbar;
     protected static ProgressDialog pDialog;
@@ -56,11 +58,10 @@ public class LoginApproved extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
 
-
         super.onCreate(savedInstanceState);
         loginActivity = this;
         setContentView(R.layout.login_design_approved);
-       initToolbar();
+        initToolbar();
 
         try {
             if (TakeATour.getInstance() != null) {
@@ -102,9 +103,9 @@ public class LoginApproved extends AppCompatActivity {
         password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus){
+                if (hasFocus) {
                     password.setHint("");
-                }else {
+                } else {
                     password.setHint(getString(R.string.password));
                 }
             }
@@ -206,7 +207,7 @@ public class LoginApproved extends AppCompatActivity {
 //                                        startActivity(mainIntent);
                                     }
                                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
-                        Toast.makeText(LoginApproved.this,R.string.connection_problem, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginApproved.this, R.string.connection_problem, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -231,9 +232,10 @@ public class LoginApproved extends AppCompatActivity {
                                         SharedPreferences.Editor editor = myPrefs.edit();
 
                                         editor.putString("account_id", String.valueOf(json.getInt("ID")));
-                                        editor.putString("account_type", json.getString("AccountStatus"));
+                                        editor.putString("account_type", json.getString("IsPassenger"));
                                         editor.putString("account_user", String.valueOf(user));
                                         editor.putString("account_pass", String.valueOf(pass));
+                                        Log.d("New Account Type:", json.getString("IsPassenger"));
 
                                         editor.commit();
                                         item.setID(json.getInt("ID"));
@@ -249,12 +251,12 @@ public class LoginApproved extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
                                 } catch (StringIndexOutOfBoundsException e) {
-                                    Toast.makeText(getBaseContext(), R.string.login_wrong_user_pass, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getBaseContext(), R.string.login_check_user_pass, Toast.LENGTH_SHORT).show();
                                     LoginApproved.pDialog.dismiss();
                                     e.printStackTrace();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(getBaseContext(), R.string.login_wrong_user_pass, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getBaseContext(), R.string.login_check_user_pass, Toast.LENGTH_SHORT).show();
                                     LoginApproved.pDialog.dismiss();
 
 
@@ -287,7 +289,7 @@ public class LoginApproved extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id==android.R.id.home){
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
@@ -305,8 +307,6 @@ public class LoginApproved extends AppCompatActivity {
     }
 
 
-
-
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.app_bar);
@@ -318,8 +318,17 @@ public class LoginApproved extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            Locale locale = Locale.getDefault();
+            String Locale_Str2 = locale.toString();
+            if (!Locale_Str2.contains("ar")) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_back);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_forward);
+            }
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 

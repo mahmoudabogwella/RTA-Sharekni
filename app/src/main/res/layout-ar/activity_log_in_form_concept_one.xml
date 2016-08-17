@@ -51,7 +51,7 @@
             android:id="@+id/fr_top_rides_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/frtakeatourarabic"
+            android:src="@drawable/happymeterarabic"
             android:scaleType="centerCrop"
             android:layout_weight="1"
             android:layout_marginTop="2dp"
@@ -78,7 +78,7 @@
     <!--android:layout_height="wrap_content"-->
     <!--app:stl_dividerThickness="0dp"-->
     <!--app:stl_indicatorColor="#FFFFFF" />-->
-        <!--android:id="@+id/indicator"-->
-        <!--android:layout_width="wrap_content"-->
+    <!--android:id="@+id/indicator"-->
+    <!--android:layout_width="wrap_content"-->
     <!-- -->
 </LinearLayout>

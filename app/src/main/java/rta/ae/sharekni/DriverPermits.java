@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Locale;
 
 import rta.ae.sharekni.Arafa.Classes.GetData;
 import rta.ae.sharekni.Arafa.Classes.VolleySingleton;
@@ -78,7 +80,6 @@ public class DriverPermits extends AppCompatActivity {
         c = this;
 
     }
-
 
 
     private class rideJson extends AsyncTask {
@@ -246,8 +247,16 @@ public class DriverPermits extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            Locale locale = Locale.getDefault();
+            String Locale_Str2 = locale.toString();
+            if (!Locale_Str2.contains("ar")) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_back);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_forward);
+            }            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override

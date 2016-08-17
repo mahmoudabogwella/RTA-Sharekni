@@ -4,11 +4,13 @@ import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,6 +28,11 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,9 +44,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeMap;
 
 import rta.ae.sharekni.Arafa.Classes.GetData;
+import rta.ae.sharekni.Arafa.Classes.VolleySingleton;
 
 public class PickUpActivity extends AppCompatActivity {
 
@@ -48,6 +57,8 @@ public class PickUpActivity extends AppCompatActivity {
     int To_Em_Id = -1;
     int To_Reg_Id = -1;
     int FLAG_ID;
+    int DistanceValue = 0;
+    int DurationValue = 0;
 
     Double Start_Latitude, Start_Longitude, End_Latitude, End_Longitude;
 
@@ -121,14 +132,14 @@ public class PickUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (FLAG_ID == 1) {
-                    Intent in = new Intent(PickUpActivity.this, QSearch.class);
+                    Intent in = new Intent(PickUpActivity.this, QuickSearch.class);
                     if (From_Em_Id != -1 && From_Reg_Id != -1) {
 
                         if (To_Em_Id == -1 && To_Reg_Id == -1) {
 
                             To_Em_Id = 0;
                             To_Reg_Id = 0;
-                            Log.d("TO id's","Zero");
+                            Log.d("TO id's", "Zero");
 
                             in.putExtra("From_Em_Id", From_Em_Id);
                             in.putExtra("From_EmirateEnName", From_EmirateEnName);
@@ -167,7 +178,7 @@ public class PickUpActivity extends AppCompatActivity {
                             back1.cancel(true);
                             back2.cancel(true);
                             finish();
-                            Log.d("TO id's","Values");
+                            Log.d("TO id's", "Values");
 
                         }
 
@@ -230,29 +241,63 @@ public class PickUpActivity extends AppCompatActivity {
                 } //  else if 2
 
                 else if (FLAG_ID == 3) {
-                    Intent in = new Intent(PickUpActivity.this, DriverCreateCarPool.class);
                     if (From_Em_Id != -1 && From_Reg_Id != -1 && To_Em_Id != -1 && To_Reg_Id != -1) {
-                        in.putExtra("From_Em_Id", From_Em_Id);
-                        in.putExtra("From_EmirateEnName", From_EmirateEnName);
-                        in.putExtra("From_RegionEnName", From_RegionEnName);
-                        in.putExtra("From_Reg_Id", From_Reg_Id);
-                        in.putExtra("To_Em_Id", To_Em_Id);
-                        in.putExtra("To_EmirateEnName", To_EmirateEnName);
-                        in.putExtra("To_RegionEnName", To_RegionEnName);
-                        in.putExtra("To_Reg_Id", To_Reg_Id);
-                        in.putExtra("Start_Latitude", Start_Latitude);
-                        in.putExtra("Start_Longitude", Start_Longitude);
-                        in.putExtra("End_Latitude", End_Latitude);
-                        in.putExtra("End_Longitude", End_Longitude);
-                        Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
-                        Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
-                        Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
-                        Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
-                        startActivity(in);
-                        back1.cancel(true);
-                        back2.cancel(true);
+                        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?";
+                        url += "origins=" + Start_Latitude + "," + Start_Longitude + "&destinations=" + End_Latitude + "," + End_Longitude
+                                + "&key=" + "AIzaSyDjDfEe3c7xfwpLqVhktVa9Nkoh2fB9Z_I";
+                        Log.d("Dustance URl ", url);
+                        // Request a string response from the provided URL.
+                        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        Log.d("Distance Api ", response);
+                                        try {
+                                            JSONObject json = new JSONObject(response);
+                                            Log.d("Distance String ", json.toString());
+                                            int Distance = (int) json.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
+                                                    .getJSONObject(0).getJSONObject("distance").get("value");
+                                            int Duration = (int) json.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
+                                                    .getJSONObject(0).getJSONObject("duration").get("value");
+                                            Log.d("Distance value", String.valueOf(Distance));
+                                            Log.d("Duration Value ", String.valueOf(Duration));
+                                            Intent in = new Intent(PickUpActivity.this, DriverCreateCarPool.class);
+                                            in.putExtra("From_Em_Id", From_Em_Id);
+                                            in.putExtra("From_EmirateEnName", From_EmirateEnName);
+                                            in.putExtra("From_RegionEnName", From_RegionEnName);
+                                            in.putExtra("From_Reg_Id", From_Reg_Id);
+                                            in.putExtra("To_Em_Id", To_Em_Id);
+                                            in.putExtra("To_EmirateEnName", To_EmirateEnName);
+                                            in.putExtra("To_RegionEnName", To_RegionEnName);
+                                            in.putExtra("To_Reg_Id", To_Reg_Id);
+                                            in.putExtra("Start_Latitude", Start_Latitude);
+                                            in.putExtra("Start_Longitude", Start_Longitude);
+                                            in.putExtra("End_Latitude", End_Latitude);
+                                            in.putExtra("End_Longitude", End_Longitude);
+                                            in.putExtra("Distance", Distance);
+                                            in.putExtra("Duration", Duration);
+                                            in.putExtra("options", b);
+                                            Log.d("From_Em_Id_1", String.valueOf(From_Em_Id));
+                                            Log.d("From_Reg_Id_1", String.valueOf(From_Reg_Id));
+                                            Log.d("To_Em_Id_1", String.valueOf(To_Em_Id));
+                                            Log.d("To_Reg_Id_1", String.valueOf(To_Reg_Id));
+                                            startActivity(in);
+                                            back1.cancel(true);
+                                            back2.cancel(true);
 
-                        finish();
+                                            finish();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("Error : ", error.toString());
+                            }
+                        });
+                        VolleySingleton.getInstance(getBaseContext()
+                        ).addToRequestQueue(stringRequest);
 
 
                     } else {
@@ -327,7 +372,7 @@ public class PickUpActivity extends AppCompatActivity {
                 Emirates_Dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 Emirates_Dialog.setContentView(R.layout.languages_dialog);
                 TextView Lang_Dialog_txt_id = (TextView) Emirates_Dialog.findViewById(R.id.Lang_Dialog_txt_id);
-                Lang_Dialog_txt_id.setText("Emirates");
+                Lang_Dialog_txt_id.setText(R.string.Emirates_Str);
                 Emirates_lv = (ListView) Emirates_Dialog.findViewById(R.id.Langs_list);
                 Emirates_lv.setAdapter(Create_CarPool_EmAdapter);
                 Emirates_Dialog.show();
@@ -361,7 +406,7 @@ public class PickUpActivity extends AppCompatActivity {
                 Emirates_Dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 Emirates_Dialog.setContentView(R.layout.languages_dialog);
                 TextView Lang_Dialog_txt_id = (TextView) Emirates_Dialog.findViewById(R.id.Lang_Dialog_txt_id);
-                Lang_Dialog_txt_id.setText("Emirates");
+                Lang_Dialog_txt_id.setText(R.string.Emirates_Str);
                 Emirates_lv = (ListView) Emirates_Dialog.findViewById(R.id.Langs_list);
                 Emirates_lv.setAdapter(Create_CarPool_EmAdapter);
                 Emirates_Dialog.show();
@@ -501,10 +546,10 @@ public class PickUpActivity extends AppCompatActivity {
                             regions.setRegionLatitude(jsonObject.getDouble("RegionLatitude"));
 
                             // Testing
-                           regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
+                            // regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
 
                             // Production
-                          //    regions.setRegionLongitude(Double.valueOf(jsonObject.getString("RegionLongitude").split(",")[0]));
+                            regions.setRegionLongitude(Double.valueOf(jsonObject.getString("RegionLongitude").split(",")[0]));
                         } else {
                             regions.setRegionLatitude(0.0);
                             regions.setRegionLongitude(0.0);
@@ -608,9 +653,9 @@ public class PickUpActivity extends AppCompatActivity {
                             regions.setRegionLongitude(0.0);
                         } else {
                             //Testing Line
-                            regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
+                            // regions.setRegionLongitude(jsonObject.getDouble("RegionLongitude"));
                             //Production Line
-                          //  regions.setRegionLongitude(Double.valueOf(jsonObject.getString("RegionLongitude").split(",")[0]));
+                            regions.setRegionLongitude(Double.valueOf(jsonObject.getString("RegionLongitude").split(",")[0]));
                         }
                         arr_2.add(regions);
                     }
@@ -669,8 +714,18 @@ public class PickUpActivity extends AppCompatActivity {
         textView.setText(R.string.set_direction);
 //        toolbar.setElevation(10);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            Locale locale = Locale.getDefault();
+            String Locale_Str2 = locale.toString();
+            if (!Locale_Str2.contains("ar")) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_back);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_forward);
+            }
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
     }
 
 

@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -46,6 +47,7 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeMap;
 
 import rta.ae.sharekni.Arafa.Classes.GetData;
@@ -55,6 +57,7 @@ public class DriverCreateCarPool extends AppCompatActivity implements View.OnCli
 
 
     Double Start_Latitude = 1.0, Start_Longitude = 1.0, End_Latitude = 1.0, End_Longitude = 1.0;
+    int Distance, Duration;
     static final int DILOG_ID = 0;
     static final int TIME_DIALOG_ID = 999;
     int id = 1;
@@ -208,12 +211,17 @@ public class DriverCreateCarPool extends AppCompatActivity implements View.OnCli
                 Start_Longitude = intent.getDoubleExtra("Start_Longitude", 0);
                 End_Latitude = intent.getDoubleExtra("End_Latitude", 0);
                 End_Longitude = intent.getDoubleExtra("End_Longitude", 0);
+                Distance = intent.getIntExtra("Distance", 0);
+                Duration = intent.getIntExtra("Duration", 0);
 
-                Log.d("Start lat", String.valueOf(End_Latitude));
-                Log.d("Start lat", String.valueOf(End_Longitude));
+                Log.d("End lat", String.valueOf(End_Latitude));
+                Log.d("End lng", String.valueOf(End_Longitude));
+                Log.d("Distance Create ", String.valueOf(Distance));
+                Log.d("Duration Create", String.valueOf(Duration));
+
 
                 Log.d("Start lat", String.valueOf(Start_Latitude));
-                Log.d("Start lat", String.valueOf(Start_Longitude));
+                Log.d("Start Lng", String.valueOf(Start_Longitude));
 
 //                in.putExtra("Start_Latitude",Start_Latitude);
 //                in.putExtra("Start_Longitude",Start_Longitude);
@@ -516,57 +524,6 @@ public class DriverCreateCarPool extends AppCompatActivity implements View.OnCli
             }
         });
 
-//        //Create_CarPool
-//        Create_CarPool_malefemale1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                gender = 'F';
-//                Create_CarPool_malefemale1.setVisibility(View.INVISIBLE);
-//                Create_CarPool_femalemale2.setVisibility(View.VISIBLE);
-//                maleFemaleTxt.setTextColor(Color.GRAY);
-//                FemaleMaleTxt.setTextColor(Color.RED);
-//                Log.d("gender", String.valueOf(gender));
-//            }
-//        });
-
-//        Create_CarPool_femalemale2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                gender = 'M';
-//                Create_CarPool_femalemale2.setVisibility(View.INVISIBLE);
-//                Create_CarPool_malefemale1.setVisibility(View.VISIBLE);
-//                maleFemaleTxt.setTextColor(Color.RED);
-//                FemaleMaleTxt.setTextColor(Color.GRAY);
-//                Log.d("gender", String.valueOf(gender));
-//
-//            }
-//        });
-
-//        FemaleMaleTxt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                gender = 'F';
-//                maleFemaleTxt.setTextColor(Color.GRAY);
-//                FemaleMaleTxt.setTextColor(Color.RED);
-//                Create_CarPool_malefemale1.setVisibility(View.INVISIBLE);
-//                Create_CarPool_femalemale2.setVisibility(View.VISIBLE);
-//                Log.d("gender", String.valueOf(gender));
-//            }
-//        });
-//
-//        maleFemaleTxt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                gender = 'M';
-//                maleFemaleTxt.setTextColor(Color.RED);
-//                FemaleMaleTxt.setTextColor(Color.GRAY);
-//                Create_CarPool_malefemale1.setVisibility(View.VISIBLE);
-//                Create_CarPool_femalemale2.setVisibility(View.INVISIBLE);
-//                Log.d("gender", String.valueOf(gender));
-//
-//            }
-//        });
-
         seat1_on.setOnClickListener(this);
         seat2_on.setOnClickListener(this);
         seat3_on.setOnClickListener(this);
@@ -708,8 +665,17 @@ public class DriverCreateCarPool extends AppCompatActivity implements View.OnCli
         TextView textView = (TextView) toolbar.findViewById(R.id.mytext_appbar);
         textView.setText(getString(R.string.create_ride));
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            Locale locale = Locale.getDefault();
+            String Locale_Str2 = locale.toString();
+            if (!Locale_Str2.contains("ar")) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_back);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_forward);
+            }
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -750,10 +716,10 @@ public class DriverCreateCarPool extends AppCompatActivity implements View.OnCli
                     String Friday = String.valueOf(FRI_FLAG);
 
                     // For Production
-                    //int Vehicle_ID = Vehicle_Id;
+                    int Vehicle_ID = Vehicle_Id;
 
                     //  For Testing
-                     int Vehicle_ID = 4;
+                    //   int Vehicle_ID = 4;
 
                     int No_OF_Seats = Number_Of_Seats;
                     double Start_Lat = Start_Latitude;
@@ -769,7 +735,7 @@ public class DriverCreateCarPool extends AppCompatActivity implements View.OnCli
                     j.DriverCreateCarPoolFrom(MyId, EnName, FromEmId, ToEmId, FromRegId, ToRegId
                             , is_Rounded, Time, Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday
                             , gender, Vehicle_ID, No_OF_Seats, Start_Lat, Start_Lng, End_Lat, End_Lng
-                            , pref_lnag, pref_nat, Age_Ranged_id, StartDate, IS_Smoking, From_EmirateEnName_str, From_RegionEnName_str, To_EmirateEnName_str, To_RegionEnName_str, this);
+                            , pref_lnag, pref_nat, Age_Ranged_id, StartDate, IS_Smoking, From_EmirateEnName_str, From_RegionEnName_str, To_EmirateEnName_str, To_RegionEnName_str, Distance, Duration, this);
                     i2 = 1;
                 }
             } else {

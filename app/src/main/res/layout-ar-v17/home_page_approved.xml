@@ -461,7 +461,7 @@
                             android:layout_height="30dp"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="20dp"
-                            android:src="@drawable/homehistory" />
+                            android:src="@drawable/homehappymeter" />
 
 
                         <TextView
@@ -578,6 +578,7 @@
 
 
     </LinearLayout>
+
 
     <fragment
         android:id="@+id/fragment_navigation_drawwer"

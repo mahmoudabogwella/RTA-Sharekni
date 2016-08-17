@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,8 +36,9 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import rta.ae.sharekni.Arafa.Activities.Profile;
+import rta.ae.sharekni.Arafa.Activities.DriverDetails;
 import rta.ae.sharekni.Arafa.Classes.GetData;
 
 
@@ -258,14 +260,14 @@ public class QuickSearchResults extends AppCompatActivity {
 
                             int x1 = json.getInt("GreenPoints");
                             int x3 = json.getInt("CO2Saved");
-                            x3 = x3/1000;
+                            x3 = x3 / 1000;
 
                             item.setGreenPoints(String.valueOf(x1));
                             item.setGreenCo2Saving(String.valueOf(x3));
 
 
-                         //   item.setGreenPoints(json.getString("GreenPoints"));
-                         //   item.setGreenCo2Saving(json.getString("CO2Saved"));
+                            //   item.setGreenPoints(json.getString("GreenPoints"));
+                            //   item.setGreenCo2Saving(json.getString("CO2Saved"));
 
                             if (!json.getString("AccountPhoto").equals("NoImage.png")) {
                                 GetData gd = new GetData();
@@ -318,7 +320,7 @@ public class QuickSearchResults extends AppCompatActivity {
                             lvResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Intent in = new Intent(QuickSearchResults.this, Profile.class);
+                                    Intent in = new Intent(QuickSearchResults.this, DriverDetails.class);
                                     in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     in.putExtra("DriverID", searchArray.get(position).getDriverId());
                                     in.putExtra("PassengerID", ID);
@@ -787,8 +789,17 @@ public class QuickSearchResults extends AppCompatActivity {
         }
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            Locale locale = Locale.getDefault();
+            String Locale_Str2 = locale.toString();
+            if (!Locale_Str2.contains("ar")) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_back);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_forward);
+            }
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 
@@ -899,14 +910,14 @@ public class QuickSearchResults extends AppCompatActivity {
 
                             int x1 = json.getInt("GreenPoints");
                             int x3 = json.getInt("CO2Saved");
-                            x3 = x3/1000;
+                            x3 = x3 / 1000;
 
                             item.setGreenPoints(String.valueOf(x1));
                             item.setGreenCo2Saving(String.valueOf(x3));
 
 
-                          //  item.setGreenPoints(json.getString("GreenPoints"));
-                          //  item.setGreenCo2Saving(json.getString("CO2Saved"));
+                            //  item.setGreenPoints(json.getString("GreenPoints"));
+                            //  item.setGreenCo2Saving(json.getString("CO2Saved"));
 
                             days = "";
 
@@ -939,7 +950,7 @@ public class QuickSearchResults extends AppCompatActivity {
                             lvResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Intent in = new Intent(QuickSearchResults.this, Profile.class);
+                                    Intent in = new Intent(QuickSearchResults.this, DriverDetails.class);
                                     in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     in.putExtra("DriverID", searchArray.get(position).getDriverId());
                                     in.putExtra("PassengerID", ID);
@@ -1032,7 +1043,7 @@ public class QuickSearchResults extends AppCompatActivity {
                         try {
                             jArray = j.Search(0, Gender, Time, From_Em_Id
                                     , From_Reg_Id, To_Em_Id, To_Reg_Id, Language_ID, Nat_ID
-                                    , Advanced_Search_Age_Range_ID, StartDate, saveFind, Single_Periodic_ID, Smokers, acivity);
+                                    , Advanced_Search_Age_Range_ID, StartDate, saveFind, Single_Periodic_ID, Smokers, 0, 0, 0, 0, acivity);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -1041,7 +1052,7 @@ public class QuickSearchResults extends AppCompatActivity {
                         try {
                             jArray = j.Search(0, Gender, Time, From_Em_Id
                                     , From_Reg_Id, To_Em_Id, To_Reg_Id, Language_ID, Nat_ID
-                                    , Advanced_Search_Age_Range_ID, StartDate, saveFind, Single_Periodic_ID, Smokers, acivity);
+                                    , Advanced_Search_Age_Range_ID, StartDate, saveFind, Single_Periodic_ID, Smokers, 0, 0, 0, 0, acivity);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -1053,7 +1064,7 @@ public class QuickSearchResults extends AppCompatActivity {
                     try {
                         jArray = j.Search(Integer.parseInt(ID), Gender, Time, From_Em_Id
                                 , From_Reg_Id, To_Em_Id, To_Reg_Id, Language_ID, Nat_ID
-                                , Advanced_Search_Age_Range_ID, StartDate, saveFind, Single_Periodic_ID, Smokers, acivity);
+                                , Advanced_Search_Age_Range_ID, StartDate, saveFind, Single_Periodic_ID, Smokers, 0, 0, 0, 0, acivity);
                     } catch (JSONException e) {
                         error = true;
                         e.printStackTrace();

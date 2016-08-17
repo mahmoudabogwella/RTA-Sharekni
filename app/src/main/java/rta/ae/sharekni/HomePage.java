@@ -11,12 +11,12 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -55,8 +55,9 @@ import rta.ae.sharekni.Arafa.Classes.GetData;
 import rta.ae.sharekni.Arafa.Classes.ImageDecoder;
 import rta.ae.sharekni.Arafa.Classes.VolleySingleton;
 import rta.ae.sharekni.Arafa.DataModel.BestRouteDataModel;
+import rta.ae.sharekni.MainActivityClass.Sharekni;
 import rta.ae.sharekni.MainNavigationDrawerFragment.NavigationDrawerFragment;
-import rta.ae.sharekni.OnBoardDir.OnboardingActivity;
+import rta.ae.sharekni.StartScreen.StartScreenActivity;
 
 
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
@@ -148,8 +149,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         }
         try {
-            if (OnboardingActivity.getInstance() != null) {
-                OnboardingActivity.getInstance().finish();
+            if (StartScreenActivity.getInstance() != null) {
+                StartScreenActivity.getInstance().finish();
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -203,69 +204,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         Locale_Str = locale.toString();
         Log.d("Main  Home locale", Locale_Str);
 
-
-        NavigationDrawerFragment.navy_Change_lang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                Locale locale = Locale.getDefault();
-                Locale_Str = locale.toString();
-                Log.d("Home locale", Locale_Str);
-
-
-                if (Locale_Str.contains("en")) {
-
-                    Locale locale2 = new Locale("ar");
-                    Locale.setDefault(locale2);
-                    Configuration config2 = new Configuration();
-                    config2.locale = locale2;
-                    getApplicationContext().getResources().updateConfiguration(config2, null);
-                    finish();
-                    startActivity(getIntent());
-
-                } else {
-
-
-                    Locale locale3 = new Locale("en_US");
-                    Locale.setDefault(locale3);
-                    Configuration config3 = new Configuration();
-                    config3.locale = locale3;
-                    getApplicationContext().getResources().updateConfiguration(config3, null);
-                    finish();
-                    startActivity(getIntent());
-                }
-
-
-//                new AlertDialog.Builder(HomePage.this)
-//                        .setTitle(R.string.choose_language)
-//                        .setMessage(R.string.choose_language_mss)
-//                        .setPositiveButton("English", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Locale locale = new Locale("en_US");
-//                                Locale.setDefault(locale);
-//                                Configuration config = new Configuration();
-//                                config.locale = locale;
-//                                getBaseContext().getApplicationContext().getResources().updateConfiguration(config, null);
-//                                finish();
-//                                startActivity(getIntent());
-//                            }
-//                        })
-//                        .setNegativeButton("العربية", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Locale locale = new Locale("ar");
-//                                Locale.setDefault(locale);
-//                                Configuration config = new Configuration();
-//                                config.locale = locale;
-//                                getBaseContext().getApplicationContext().getResources().updateConfiguration(config, null);
-//                                finish();
-//                                startActivity(getIntent());
-//                            }
-//                        }).setIcon(android.R.drawable.ic_dialog_alert).show();
-
-
-            }
-        });
         myPrefs = this.getSharedPreferences("myPrefs", 0);
         ID = myPrefs.getString("account_id", null);
         AccountType = myPrefs.getString("account_type", null);
@@ -336,14 +274,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     DriverMyRidesCount_str += ")";
                     DriverMyRidesCount.setText(DriverMyRidesCount_str);
                     DriverMyAlertsCount.setText(String.valueOf(All_Alerts));
-
-//                if (DRIVER_ALERTS_COUNT>0){
-//
-//
-//
-//                }
-
-
                     DriverMyAlertsCount.setText(String.valueOf(All_Alerts));
 
                 } catch (JSONException e) {
@@ -659,16 +589,18 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
 
-        if (AccountType.equals("D")) {
+        if (AccountType.equals("false")) {
+            Log.d("Hello I'm Driver:", AccountType);
+
             if (v == btn_create) {
 
                 Log.d("Driver Rides Count", String.valueOf(Driver_Rides_Count));
 
                 // For Testing Purpose
-                if (true) {
+                //  if (true) {
 
-                    //  For Prodution
-                    //     if (Vehicles_Count_FLAG != 0) {
+                //  For Production
+                if (Vehicles_Count_FLAG != 0) {
 
 
                     if (Driver_Rides_Count < 2) {
@@ -763,6 +695,15 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         @Override
         protected void onPostExecute(Object o) {
             try {
+
+                AccountType = jsonArray.getString("IsPassenger");
+                Log.d("Account Type : ", AccountType);
+
+                SharedPreferences myPrefs = getBaseContext().getSharedPreferences("myPrefs", 0);
+                SharedPreferences.Editor editor = myPrefs.edit();
+
+                editor.putString("account_type", jsonArray.getString("IsPassenger"));
+
                 All_Alerts = jsonArray.getInt("DriverMyAlertsCount") + jsonArray.getInt("PassengerMyAlertsCount") + jsonArray.getInt("PendingRequestsCount") + jsonArray.getInt("PendingInvitationCount") + jsonArray.getInt("Passenger_Invitation_Count");
                 name_str = "";
                 nat_str = "";
@@ -849,7 +790,9 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 assert AccountType != null;
 
 
-                if (!AccountType.equals("D")) {
+                if (!AccountType.equals("false")) {
+                    Log.d("Hello I'm Passenger :", AccountType);
+
                     // btn_create.setBackgroundColor(Color.LTGRAY);
 //                    Home_Relative_Permit.setBackgroundColor(Color.LTGRAY);
                     Rides_joined_txt_1.setText(R.string.rides_joined);
@@ -984,6 +927,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     Locale locale = Locale.getDefault();
                     Locale_Str = locale.toString();
                     if (Locale_Str.contains("en")) {
+
                         if (jsonArray.getString("GenderEn").equals("Male")) {
                             circularImageView.setImageResource(R.drawable.imageafterediten);
                             NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageafterediten);
@@ -995,7 +939,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
                         }
 
-                    } else {
+                    } else if (Locale_Str.contains("ar")) {
 
                         if (jsonArray.getString("GenderEn").equals("Male")) {
                             circularImageView.setImageResource(R.drawable.imageaftereditar);
@@ -1004,6 +948,31 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                         } else {
                             circularImageView.setImageResource(R.drawable.imageaftereditfemalear);
                             NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageaftereditfemalear);
+
+                        }
+
+                    } else if (Locale_Str.contains("fil")) {
+                        if (jsonArray.getString("GenderEn").equals("Male")) {
+                            circularImageView.setImageResource(R.drawable.imageafterediten_fi);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageafterediten_fi);
+
+
+                        } else {
+                            circularImageView.setImageResource(R.drawable.imageaftereditfemale_fi);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageaftereditfemale_fi);
+
+                        }
+
+                    } else if (Locale_Str.contains("zh")) {
+
+                        if (jsonArray.getString("GenderEn").equals("Male")) {
+                            circularImageView.setImageResource(R.drawable.imageafterediten_ch);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageafterediten_ch);
+
+
+                        } else {
+                            circularImageView.setImageResource(R.drawable.imageaftereditfemale_ch);
+                            NavigationDrawerFragment.circularImageView.setImageResource(R.drawable.imageaftereditfemale_fi);
 
                         }
 
@@ -1027,6 +996,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 }
 
             } catch (JSONException e) {
+
                 hidePDialog();
                 e.printStackTrace();
             } catch (NullPointerException e) {
@@ -1037,8 +1007,12 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             btn_history.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getBaseContext(), HistoryNew.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(getBaseContext(), HistoryNew.class);
+//                    startActivity(intent);
+                    HappyMeterDialogFragment.newFragment = new HappyMeterDialogFragment();
+                    HappyMeterDialogFragment.newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.theme_sms_receive_dialog);
+                    HappyMeterDialogFragment.newFragment.show(getSupportFragmentManager(), "missiles");
+
 
                 }
             });
@@ -1046,7 +1020,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             Edit_Profile_Im.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getBaseContext(), EditProfileTest.class);
+                    Intent intent = new Intent(getBaseContext(), EditProfile.class);
                     startActivity(intent);
                 }
             });
@@ -1128,7 +1102,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             Relative_quickSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getBaseContext(), QSearch.class);
+                    Intent intent = new Intent(getBaseContext(), QuickSearch.class);
                     intent.putExtra("PassengerId", ID);
                     startActivity(intent);
 

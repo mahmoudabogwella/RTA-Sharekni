@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Locale;
 
 import rta.ae.sharekni.Arafa.Classes.GetData;
 import rta.ae.sharekni.Arafa.Classes.VolleySingleton;
@@ -41,12 +43,12 @@ import rta.ae.sharekni.Arafa.DataModel.BestRouteDataModel;
 
 public class PassengerMyApprovedRides extends AppCompatActivity {
 
-    String url =  GetData.DOMAIN + "Passenger_MyApprovedRides?AccountId=";
+    String url = GetData.DOMAIN + "Passenger_MyApprovedRides?AccountId=";
     ListView Passenger_Approved_Rides_Lv;
     SharedPreferences myPrefs;
     int Passenger_ID;
 
-    GetData j= new GetData();
+    GetData j = new GetData();
 
     String days;
     Toolbar toolbar;
@@ -57,24 +59,20 @@ public class PassengerMyApprovedRides extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_my_approved_rides);
         initToolbar();
-        Passenger_Approved_Rides_Lv= (ListView) findViewById(R.id.Passenger_Approved_Rides_Lv);
+        Passenger_Approved_Rides_Lv = (ListView) findViewById(R.id.Passenger_Approved_Rides_Lv);
 
         myPrefs = this.getSharedPreferences("myPrefs", 0);
-        String ID = myPrefs.getString("account_id",null);
+        String ID = myPrefs.getString("account_id", null);
 
         Passenger_ID = Integer.parseInt(ID);
         Log.d("Driverid1", String.valueOf(Passenger_ID));
 
-        c=this;
+        c = this;
 
         new rideJson().execute();
 
 
-
     }
-
-
-
 
 
     private class rideJson extends AsyncTask {
@@ -150,8 +148,8 @@ public class PassengerMyApprovedRides extends AppCompatActivity {
                                     JSONObject json;
 
 
-                                    if (jArray.length()==0){
-                                        Log.d("Error 3 ","Error3");
+                                    if (jArray.length() == 0) {
+                                        Log.d("Error 3 ", "Error3");
 
                                         final Dialog dialog = new Dialog(c);
                                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -170,7 +168,6 @@ public class PassengerMyApprovedRides extends AppCompatActivity {
                                         });
 
                                     }
-
 
 
                                     for (int i = 0; i < jArray.length(); i++) {
@@ -235,10 +232,6 @@ public class PassengerMyApprovedRides extends AppCompatActivity {
     } //  Ride Json
 
 
-
-
-
-
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.app_bar);
@@ -250,8 +243,17 @@ public class PassengerMyApprovedRides extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            Locale locale = Locale.getDefault();
+            String Locale_Str2 = locale.toString();
+            if (Locale_Str2.contains("en")) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_back);
+            } else {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_action_navigation_arrow_forward);
+            }
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 
